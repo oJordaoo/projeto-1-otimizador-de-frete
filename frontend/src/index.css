@@ -1,0 +1,45 @@
+/* frontend/src/index.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+  color: var(--text-primary);
+}
+
+:root {
+  --logired-primary: #E53935;
+  --logired-dark: #B71C1C;
+  --logired-accent: #FF7043;
+  --bg-primary: #F8F8F8;
+  --bg-secondary: #FFFFFF;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --border-color: #E0E0E0;
+  --shadow-color: rgba(0, 0, 0, 0.08);
+}
+
+body.dark-mode {
+  --bg-primary: #1A1A1A;
+  --bg-secondary: #2C2C2C;
+  --text-primary: #E0E0E0;
+  --text-secondary: #AAAAAA;
+  --border-color: #444444;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
