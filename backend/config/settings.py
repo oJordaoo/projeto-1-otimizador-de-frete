@@ -1,10 +1,10 @@
-# backend/config/settings.py
-
 from pathlib import Path
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-=+y@m2)l$i5^p$w)g!7x$s8z^c$@#&h%5d8a0%#^h#&@#^h'
+# A chave secreta agora é lida do arquivo .env
+SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = True
 
@@ -12,14 +12,9 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
-    # Nossos apps
     'api',
-
-    # Apps de terceiros
     'rest_framework',
     'corsheaders',
-
-    # Apps padrão do Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -66,7 +61,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'otimizador_frete',
         'USER': 'postgres',
-        'PASSWORD': '031107200312', # <-- MODIFIQUE APENAS AQUI
+        'PASSWORD': config('DB_PASSWORD'), # A senha agora é lida do arquivo .env
         'HOST': 'localhost',
         'PORT': '5432',
     }

@@ -1,8 +1,10 @@
+# Python / Django
 __pycache__/
 *.pyc
 venv/
 .env
 
+# Node / React
 node_modules/
 dist/
 .npm
@@ -11,4 +13,5 @@ yarn-debug.log*
 yarn-error.log*
 .DS_Store
 
+# VS Code
 .vscode/
