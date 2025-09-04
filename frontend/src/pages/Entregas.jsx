@@ -1,3 +1,5 @@
+// frontend/src/pages/Entregas.jsx
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -14,6 +16,7 @@ function Entregas() {
       } catch (err) {
         setError('Falha ao buscar os dados das entregas.');
         console.error(err);
+
       } finally {
         setLoading(false);
       }

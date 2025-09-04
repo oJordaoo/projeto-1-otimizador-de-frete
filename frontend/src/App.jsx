@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
+import HomePage from './pages/HomePage'; // <-- A importação agora corresponde ao nome do arquivo
 import Dashboard from './pages/Dashboard';
 import Entregas from './pages/Entregas';
 import Veiculos from './pages/Veiculos';
@@ -8,13 +9,15 @@ import Veiculos from './pages/Veiculos';
 function App() {
   return (
     <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/entregas" element={<Entregas />} />
-          <Route path="/veiculos" element={<Veiculos />} />
-        </Routes>
-      </Layout>
+      <Routes>
+        {/* Rota para a Landing Page */}
+        <Route path="/" element={<HomePage />} /> 
+        
+        {/* Rotas da Área Logada - Usam o Layout (Sidebar/Header) */}
+        <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
+        <Route path="/entregas" element={<Layout><Entregas /></Layout>} />
+        <Route path="/veiculos" element={<Layout><Veiculos /></Layout>} />
+      </Routes>
     </BrowserRouter>
   );
 }
