@@ -1,8 +1,11 @@
-# backend/api/views.py
-
 from rest_framework import viewsets
 from .models import Veiculo, Entrega
-from .serializers import VeiculoSerializer, EntregaSerializer
+from .serializers import VeiculoSerializer, EntregaSerializer, MyTokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
 
 class VeiculoViewSet(viewsets.ModelViewSet):
     """

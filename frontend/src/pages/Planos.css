@@ -1,0 +1,138 @@
+.planos-container {
+  padding: 60px 20px;
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+}
+
+.planos-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.planos-header h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.planos-header p {
+  font-size: 18px;
+  color: var(--text-secondary);
+}
+
+.planos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.plano-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.plano-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .plano-card:hover {
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+.plano-card.popular {
+  border: 2px solid var(--logired-primary);
+}
+
+.popular-tag {
+  position: absolute;
+  top: 15px;
+  right: -40px;
+  background-color: var(--logired-primary);
+  color: white;
+  padding: 5px 40px;
+  transform: rotate(45deg);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.plano-card-header h3 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.plano-price {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--logired-primary);
+}
+
+.plano-period {
+  font-size: 16px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.plano-card-body {
+  margin-top: 20px;
+  flex-grow: 1;
+}
+
+.plano-description {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 25px;
+}
+
+.plano-features {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+}
+
+.plano-features li {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.plano-card-footer {
+  margin-top: 30px;
+}
+
+.btn-plano {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  border-radius: 6px;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--logired-primary);
+  color: var(--logired-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-plano:hover {
+  background-color: var(--logired-primary);
+  color: white;
+}
+
+.btn-popular {
+  background-color: var(--logired-primary);
+  color: white;
+}
+
+.btn-popular:hover {
+  background-color: var(--logired-dark);
+}

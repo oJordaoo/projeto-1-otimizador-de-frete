@@ -1,16 +1,31 @@
-.app-container {
+/* --- ESTRUTURA PRINCIPAL DA APLICAÇÃO --- */
+.app-layout {
   display: flex;
   height: 100vh;
   background-color: var(--bg-primary);
 }
 
-/* --- Sidebar Styles --- */
+.main-content-area {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.content-wrapper {
+  flex-grow: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* --- SIDEBAR --- */
 .sidebar {
   width: 260px;
   background-color: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -23,11 +38,15 @@
   color: var(--logired-primary);
   font-size: 28px;
   text-align: center;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
 }
 
 .sidebar-nav ul {
   list-style: none;
   padding: 16px;
+  margin: 0;
 }
 
 .sidebar-nav a {
@@ -55,48 +74,89 @@
 .sidebar-nav a svg {
   margin-right: 16px;
   font-size: 20px;
-}
-
-/* --- Main Content Area --- */
-.main-content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto; /* Permite scroll no conteúdo */
-}
-
-/* --- Header Styles --- */
-.header {
-  height: 70px;
-  background-color: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end; /* Alinha itens à direita */
   flex-shrink: 0;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.header-actions {
+/* --- HEADER --- */
+.app-header {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border-color);
+  height: 70px;
+}
+
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-menu-btn {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.user-menu-btn:hover {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.user-icon {
+  font-size: 18px;
+}
+
+/* --- LETREIRO NO HEADER (CSS CORRIGIDO) --- */
+.ticker-container {
+  flex-grow: 1;
+  min-width: 0;
+  height: 30px; /* Dando um pouco de altura para a animação */
+  position: relative;
+}
+
+.ticker-message {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  animation: fade-and-slide 5s ease-in-out forwards; /* Nome da animação e duração total */
+}
+
+.ticker-icon {
   display: flex;
   align-items: center;
 }
 
-.theme-toggle {
-  background: none;
-  border: none;
-  font-size: 22px;
-  cursor: pointer;
-  color: var(--text-secondary);
-  transition: color 0.2s ease;
-}
+/* Cores por tipo de mensagem */
+.ticker-message.alert { background-color: #FFC107; color: #333; }
+.ticker-message.warning { background-color: var(--logired-accent); }
+.ticker-message.info { background-color: #17A2B8; }
+.ticker-message.success { background-color: #28A745; }
 
-.theme-toggle:hover {
-  color: var(--logired-accent);
-}
-
-/* --- Page Content Styles --- */
-.content-area {
-  padding: 24px;
+/* Animação corrigida */
+@keyframes fade-and-slide {
+  0% { opacity: 0; transform: translateY(100%); }   /* Começa invisível e abaixo */
+  20% { opacity: 1; transform: translateY(0); }     /* Entra na tela */
+  80% { opacity: 1; transform: translateY(0); }     /* Permanece visível */
+  100% { opacity: 0; transform: translateY(-100%); } /* Sai por cima */
 }

@@ -1,0 +1,209 @@
+.fake-dashboard-container {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+}
+.fake-dashboard-container.non-interactive {
+  pointer-events: none;
+  user-select: none;
+}
+body.dark-mode .fake-dashboard-container {
+  background-color: #0d1117;
+  border-color: #30363d;
+}
+.fake-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+.fake-dashboard-logo {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: var(--text-primary);
+}
+.logo-square {
+  width: 20px;
+  height: 20px;
+  background-color: var(--logired-primary);
+  border-radius: 4px;
+  margin-right: 10px;
+}
+.fake-dashboard-actions {
+  display: flex;
+  gap: 20px;
+  font-size: 18px;
+  color: var(--text-secondary);
+}
+.fake-dashboard-grid {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 20px;
+  overflow: hidden;
+}
+.card {
+  background-color: var(--bg-secondary);
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+}
+.map-card {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 5;
+}
+.interactive-map-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  background-color: #1d2635;
+}
+.leaflet-container:focus {
+  outline: none;
+}
+.leaflet-popup-content-wrapper {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.leaflet-popup-content {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  margin: 10px !important;
+  line-height: 1.6;
+}
+.leaflet-popup-content strong {
+    color: var(--logired-primary);
+}
+.leaflet-popup-tip {
+  background-color: var(--bg-secondary);
+}
+.leaflet-control-container {
+  display: none;
+}
+.fake-dashboard-container.non-interactive .leaflet-control-container {
+  display: none;
+}
+
+/* --- ESTILOS PARA ÍCONES 2D E ANIMAÇÃO --- */
+.vehicle-icon-wrapper {
+    background-color: var(--logired-primary);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.vehicle-icon-wrapper svg {
+    width: 22px; 
+    height: 22px;
+    filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.3));
+}
+
+/* O marker do Leaflet em si */
+.leaflet-marker-icon {
+    /* offset-path e offset-distance serão definidos via JS para cada rota */
+    offset-rotate: auto; /* Faz o ícone rotacionar com a direção do caminho */
+    /* A propriedade animation é definida no JS com um nome de keyframe único para cada rota */
+}
+
+/* Não precisamos mais de keyframes fixos no CSS, pois o JS os gerencia dinamicamente */
+
+/* --- FIM DOS ESTILOS ESPECÍFICOS DO MAPA --- */
+
+
+.kpi-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    z-index: 10;
+}
+.kpi-card {
+  justify-content: center;
+  transition: all 0.2s ease-out;
+  cursor: pointer;
+}
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+body.dark-mode .kpi-card:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+.kpi-card.non-interactive, .kpi-card.disabled {
+    cursor: default;
+}
+.kpi-card.non-interactive:hover, .kpi-card.disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+.kpi-card.disabled {
+    opacity: 0.6;
+}
+.kpi-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.kpi-value {
+  font-size: 32px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 4px 0;
+}
+.kpi-change {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4CAF50;
+}
+.detail-view {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.5s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.detail-view h4 {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+.back-button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    padding: 0;
+}
+.back-button:hover {
+    color: var(--logired-primary);
+}

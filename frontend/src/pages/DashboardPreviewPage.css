@@ -1,0 +1,110 @@
+.preview-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--bg-primary);
+  overflow: hidden;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+/* NOVO ESTILO PARA O LOGO/LINK DE VOLTAR */
+.preview-logo-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.preview-logo-link:hover {
+  color: var(--logired-primary);
+}
+
+.back-arrow-icon {
+  font-size: 16px;
+}
+/* FIM DO NOVO ESTILO */
+
+.preview-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.preview-btn-secondary, .preview-btn-primary {
+  padding: 8px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.preview-btn-secondary {
+  background-color: transparent;
+  color: var(--text-primary);
+}
+
+.preview-btn-secondary:hover {
+  background-color: var(--bg-primary);
+}
+
+.preview-btn-primary {
+  background-color: var(--logired-primary);
+  border: 1px solid var(--logired-primary);
+  color: #FFFFFF;
+}
+
+.preview-btn-primary:hover {
+  background-color: var(--logired-dark);
+  border-color: var(--logired-dark);
+}
+
+.preview-dashboard-content {
+  flex-grow: 1;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+.preview-dashboard-content .fake-dashboard-container {
+    max-width: 1200px;
+    max-height: calc(100vh - 120px);
+    width: 100%;
+    height: 100%;
+}
+
+@media (max-width: 768px) {
+  .preview-header {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px 20px;
+  }
+  .preview-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .preview-dashboard-content {
+      padding: 10px;
+  }
+  .preview-dashboard-content .fake-dashboard-container {
+      max-height: calc(100vh - 180px);
+  }
+}

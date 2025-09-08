@@ -1,25 +1,27 @@
-/* frontend/src/pages/HomePage.css */
-
 .home-page-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  color: #FFFFFF; /* Texto branco sobre fundo escuro */
-  background-color: var(--bg-primary); /* Fundo padrão do body */
-  /* Remover margem e padding padrão para evitar barras de rolagem indesejadas */
-  margin: 0;
-  padding: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
 }
 
-/* Header */
 .home-header {
-  background-color: transparent; /* Transparente para sobrepor a imagem */
-  padding: 20px 50px;
-  position: absolute; /* Fixa no topo */
+  background-color: var(--bg-secondary);
+  padding: 15px 50px;
   width: 100%;
+  z-index: 1000;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000;
+  transition: background-color 0.3s ease;
+}
+
+body.dark-mode .home-header {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .home-nav {
@@ -29,10 +31,10 @@
 }
 
 .home-logo {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 32px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 28px;
   font-weight: 700;
-  color: var(--logired-primary); /* Logo LogiRed */
+  color: var(--logired-primary);
 }
 
 .home-menu {
@@ -43,15 +45,19 @@
   padding: 0;
 }
 
+.home-menu li {
+  cursor: pointer;
+}
+
 .home-menu a {
-  color: #FFFFFF;
+  color: var(--text-secondary);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
   transition: color 0.3s ease;
 }
 
-.home-menu a:hover {
-  color: var(--logired-accent);
+.home-menu a:hover, .home-menu a.active {
+  color: var(--logired-primary);
 }
 
 .home-actions {
@@ -59,28 +65,15 @@
   gap: 15px;
 }
 
-.btn-support, .btn-login {
+.btn-login {
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 6px;
   text-decoration: none;
   font-weight: 600;
+  font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
-  white-space: nowrap; /* Impede quebras de linha */
-}
-
-.btn-support {
-  background-color: transparent;
-  border: 1px solid #FFFFFF;
-  color: #FFFFFF;
-}
-
-.btn-support:hover {
-  background-color: #FFFFFF;
-  color: var(--logired-primary);
-}
-
-.btn-login {
+  white-space: nowrap;
   background-color: var(--logired-primary);
   border: 1px solid var(--logired-primary);
   color: #FFFFFF;
@@ -91,128 +84,218 @@
   border-color: var(--logired-dark);
 }
 
-/* Hero Section */
 .home-hero {
-  min-height: 80vh; /* Ajuste para ter um tamanho mínimo */
-  background-image: url('/src/assets/logired-bg.jpg'); /* Vamos criar essa imagem */
-  background-size: cover;
-  background-position: center;
   display: flex;
-  align-items: center; /* Centraliza verticalmente */
-  justify-content: space-between; /* Espaço entre conteúdo e formulário */
-  padding: 120px 50px 50px 50px; /* Padding para acomodar o header */
-  position: relative;
-  gap: 40px;
-}
-
-.home-hero::before { /* Overlay escuro para melhorar a legibilidade do texto */
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6); /* Escurece a imagem de fundo */
+  align-items: center;
+  justify-content: space-around;
+  padding: 60px 50px;
+  gap: 60px;
+  flex-wrap: wrap;
+  margin-top: 71px;
+  min-height: calc(100vh - 71px);
 }
 
 .hero-content {
-  position: relative; /* Para ficar acima do overlay */
-  z-index: 1;
-  max-width: 600px;
+  max-width: 550px;
+  text-align: left;
+  flex: 1;
+  min-width: 320px;
 }
 
 .hero-tagline {
-  color: var(--logired-accent);
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
+  color: var(--logired-primary);
+  font-family: 'Poppins', sans-serif;
   font-weight: 600;
   margin-bottom: 10px;
   letter-spacing: 1px;
 }
 
 .hero-title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 58px;
+  font-size: 52px;
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.2;
   margin-bottom: 20px;
-  color: #FFFFFF;
 }
 
 .hero-description {
-  font-family: 'Open Sans', sans-serif;
   font-size: 18px;
-  line-height: 1.6;
-  color: #E0E0E0;
-}
-
-/* Form Card */
-.hero-form-card {
-  position: relative; /* Para ficar acima do overlay */
-  z-index: 1;
-  background-color: #FFFFFF; /* Fundo branco para o formulário */
-  color: var(--text-primary); /* Texto escuro no formulário */
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
-  width: 100%;
-}
-
-.hero-form-card h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 24px;
-  margin-bottom: 15px;
-  color: var(--text-primary);
-}
-
-.hero-form-card p {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 15px;
+  line-height: 1.7;
   color: var(--text-secondary);
-  margin-bottom: 25px;
 }
 
-.demo-form .form-group {
+.hero-cta {
+  margin-top: 30px;
+  padding: 14px 30px;
+  font-size: 16px;
+}
+
+.hero-dashboard-wrapper {
+  flex: 1;
+  min-width: 450px;
+  max-width: 700px; /* AUMENTADO para dar um pouco mais de espaço */
+  height: 500px; /* ALTURA FIXA para o dashboard na landing page */
+  position: relative;
+  transition: transform 0.3s ease-out;
+}
+
+.hero-dashboard-wrapper:hover {
+    transform: scale(1.03);
+}
+
+.dashboard-cta {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(22, 28, 38, 0.7);
+  backdrop-filter: blur(4px);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+  z-index: 10;
+}
+
+.hero-dashboard-wrapper:hover .dashboard-cta {
+  opacity: 1;
+}
+
+.home-section {
+  padding: 80px 50px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.home-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-dark {
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.section-title {
+  font-size: 36px;
+  margin-bottom: 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-description {
+  font-size: 18px;
+  color: var(--text-secondary);
+  max-width: 700px;
+  margin: 0 auto 40px auto;
+  line-height: 1.7;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 50px;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+
+.feature-card {
+  background-color: var(--bg-secondary);
+  padding: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.feature-icon {
+  font-size: 36px;
+  color: var(--logired-primary);
   margin-bottom: 20px;
 }
 
-.demo-form input {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  font-size: 16px;
-  font-family: 'Open Sans', sans-serif;
-  color: var(--text-primary);
+.feature-card h3 {
+  margin-bottom: 10px;
+  font-size: 22px;
 }
 
-.demo-form input::placeholder {
+.feature-card p {
   color: var(--text-secondary);
+  line-height: 1.6;
 }
 
-.btn-continue {
-  width: 100%;
-  padding: 12px;
-  background-color: var(--logired-accent); /* Laranja suave para o botão */
-  color: #FFFFFF;
-  border: none;
-  border-radius: 5px;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.how-it-works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    max-width: 1000px;
+    margin: 50px auto 0 auto;
+}
+.step-card {
+    padding: 20px;
+}
+.step-number {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--logired-primary);
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px auto;
+}
+.step-card h3 {
+    margin-bottom: 10px;
+    font-size: 22px;
+}
+.step-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
 }
 
-.btn-continue:hover {
-  background-color: #FF5722; /* Um laranja mais forte no hover */
+.testimonials {
+    max-width: 700px;
+    margin: 40px auto 0 auto;
 }
-
-.form-footer {
-  text-align: center;
-  font-size: 14px;
-  color: var(--text-secondary) !important; /* Sobrescreve o p padrão */
-  margin-top: 20px;
+.testimonial-card {
+    background-color: var(--bg-primary);
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+.testimonial-card p {
+    font-size: 18px;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+}
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+.testimonial-author svg {
+    font-size: 24px;
 }
 
 .home-footer {
@@ -221,59 +304,4 @@
   text-align: center;
   padding: 20px;
   border-top: 1px solid var(--border-color);
-  margin-top: auto; /* Empurra o footer para o final */
-}
-
-/* Dark Mode adjustments for HomePage - mainly for the form card if it's placed outside hero */
-body.dark-mode .home-page-container {
-  background-color: var(--bg-primary); /* Garante que o fundo não muda */
-}
-
-body.dark-mode .home-hero {
-    background-image: url('/src/assets/logired-bg-dark.jpg'); /* Imagem de fundo opcional para dark mode */
-}
-
-body.dark-mode .home-logo {
-  color: var(--logired-accent); /* Logo pode ser acentuada no dark mode */
-}
-
-body.dark-mode .home-menu a {
-  color: #E0E0E0; /* Texto mais claro no dark mode */
-}
-
-body.dark-mode .btn-support {
-  border-color: #E0E0E0;
-  color: #E0E0E0;
-}
-
-body.dark-mode .btn-support:hover {
-  background-color: #E0E0E0;
-  color: var(--bg-primary);
-}
-
-body.dark-mode .btn-login {
-  background-color: var(--logired-primary);
-  border-color: var(--logired-primary);
-  color: #FFFFFF;
-}
-
-body.dark-mode .hero-form-card {
-  background-color: var(--bg-secondary); /* Fundo do card mais escuro no dark mode */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-}
-
-body.dark-mode .hero-form-card h2,
-body.dark-mode .hero-form-card p,
-body.dark-mode .demo-form input {
-  color: var(--text-primary);
-}
-
-body.dark-mode .demo-form input::placeholder {
-  color: var(--text-secondary);
-}
-
-body.dark-mode .home-footer {
-  background-color: var(--bg-secondary);
-  border-color: var(--border-color);
-  color: var(--text-secondary);
 }
