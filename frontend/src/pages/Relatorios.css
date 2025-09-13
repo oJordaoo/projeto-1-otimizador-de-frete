@@ -1,0 +1,32 @@
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Grid responsivo */
+  gap: 24px;
+}
+
+.report-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow-light);
+}
+
+.report-card h3 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 18px;
+  text-align: center;
+}
+
+/* Estilos para o filtro de data no cabeçalho */
+.date-filter select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}

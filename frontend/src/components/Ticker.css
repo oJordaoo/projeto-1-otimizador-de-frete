@@ -1,0 +1,68 @@
+.airport-ticker {
+  display: flex;
+  background-color: #111; /* Fundo preto do letreiro */
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: 'Roboto Mono', monospace; /* Fonte monoespaçada para o efeito */
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5), 0 2px 2px rgba(255,255,255,0.1);
+  border: 1px solid #333;
+  overflow: hidden;
+}
+
+.ticker-label {
+  margin-right: 12px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+}
+.ticker-label.info { background-color: #17A2B8; }
+.ticker-label.success { background-color: #28A745; }
+.ticker-label.warning { background-color: var(--logired-accent); }
+.ticker-label.alert { background-color: var(--logired-primary); }
+
+.ticker-line {
+  display: flex;
+  color: #f0f0f0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.char-container {
+  perspective: 200px;
+  display: inline-block;
+}
+
+.char-flipper {
+  display: inline-block;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: flip 0.8s ease-in-out;
+}
+
+.char-flipper-front,
+.char-flipper-back {
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.char-flipper-front {
+  transform: rotateX(0deg);
+}
+
+.char-flipper-back {
+  transform: rotateX(-180deg);
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateX(0deg);
+  }
+  100% {
+    transform: rotateX(180deg);
+  }
+}

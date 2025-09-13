@@ -1,104 +1,162 @@
-/* --- ESTRUTURA PRINCIPAL DA APLICAÇÃO --- */
-.app-layout {
+/* --- NOVA ESTRUTURA DE LAYOUT CORRIGIDA --- */
+.app-layout-main {
   display: flex;
+  flex-direction: column; /* Organiza os filhos verticalmente */
   height: 100vh;
   background-color: var(--bg-primary);
 }
 
-.main-content-area {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.content-wrapper {
-  flex-grow: 1;
-  padding: 24px;
-  overflow-y: auto;
-}
-
-/* --- SIDEBAR --- */
-.sidebar {
-  width: 260px;
-  background-color: var(--bg-secondary);
-  border-right: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-.sidebar-header {
-  padding: 24px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.sidebar-title {
-  color: var(--logired-primary);
-  font-size: 28px;
-  text-align: center;
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-}
-
-.sidebar-nav ul {
-  list-style: none;
-  padding: 16px;
-  margin: 0;
-}
-
-.sidebar-nav a {
+/* --- TOPNAV (AGORA INCLUI O LETREIRO E MENU DE USUÁRIO) --- */
+.top-nav {
   display: flex;
   align-items: center;
-  padding: 14px 20px;
-  border-radius: 8px;
-  text-decoration: none;
+  background-color: var(--bg-secondary);
+  height: 65px;
+  padding: 0 20px; /* Reduzindo um pouco o padding para o letreiro caber */
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-light);
+}
+
+.top-nav-logo {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+  color: var(--vexa-primary);
+  margin-right: 30px; /* Ajuste na margem */
+  flex-shrink: 0; /* Impede que a logo encolha */
+}
+
+.top-nav-links {
+  display: flex;
+  height: 100%;
+  /* flex-grow: 1; Removendo para dar espaço ao letreiro */
+  align-items: center;
+  gap: 10px; /* Espaçamento entre os links */
+  flex-shrink: 0; /* Impede que os links encolham */
+}
+
+.top-nav-links a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px; /* Ajuste no padding dos links */
   color: var(--text-secondary);
+  text-decoration: none;
   font-weight: 600;
-  margin-bottom: 8px;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  font-size: 15px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+  height: 100%; /* Para alinhar com o top-nav */
 }
 
-.sidebar-nav a:hover {
+.top-nav-links a:hover {
+  color: var(--text-primary);
   background-color: var(--bg-primary);
-  color: var(--text-primary);
 }
 
-.sidebar-nav a.active {
-  background-color: var(--logired-primary);
-  color: #FFFFFF;
+.top-nav-links a.active {
+  color: var(--vexa-primary);
+  border-bottom-color: var(--vexa-primary);
 }
 
-.sidebar-nav a svg {
-  margin-right: 16px;
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-/* --- HEADER --- */
-.app-header {
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
-  padding: 15px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-  border-bottom: 1px solid var(--border-color);
-  height: 70px;
-}
-
-.header-left, .header-right {
+/* --- ESTILOS DO LETREIRO DENTRO DO TOPNAV --- */
+.header-ticker-interactive {
+  flex-grow: 1; /* Ocupa o espaço restante no centro */
+  min-width: 200px; /* Garante um tamanho mínimo para o letreiro */
+  height: 100%;
   display: flex;
   align-items: center;
-  gap: 15px;
+  overflow: hidden; /* Importante para a rolagem */
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); /* Efeito de fade nas bordas */
+  margin: 0 20px; /* Espaçamento lateral */
 }
 
+.ticker-track {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  animation: scroll-ticker 40s linear infinite; /* Animação de rolagem contínua */
+  white-space: nowrap; /* Impede que os itens quebrem linha */
+}
+.ticker-track:hover {
+    animation-play-state: paused; /* PAUSA A ANIMAÇÃO NO HOVER */
+}
+
+@keyframes scroll-ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); } /* Rola até a metade (onde começa a cópia) */
+}
+
+.ticker-item-interactive {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espaçamento menor entre ícone e texto */
+  padding: 6px 14px; /* Ajuste no padding */
+  margin: auto 10px; /* Ajuste na margem */
+  border-radius: 20px;
+  color: white;
+  font-size: 13px; /* Fonte um pouco menor */
+  font-weight: 500;
+  flex-shrink: 0;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+}
+.ticker-item-interactive:hover {
+    transform: translateY(-2px); /* Efeito sutil no hover */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.ticker-item-interactive .ticker-icon { font-size: 14px; } /* Ícone um pouco menor */
+
+/* Cores por tipo - utilizando as variáveis VEXA */
+.ticker-item-interactive.success { background-color: var(--vexa-accent); }
+.ticker-item-interactive.info { background-color: var(--vexa-primary); }
+.ticker-item-interactive.warning { background-color: #FFC107; color: #333; } /* Amarelo */
+.ticker-item-interactive.alert { background-color: var(--vexa-danger); }
+
+/* Tooltip que aparece no hover */
+.ticker-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--vexa-primary); /* Fundo do tooltip na cor primária VEXA */
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    width: max-content;
+    max-width: 250px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 1001; /* Garante que o tooltip fique acima de tudo */
+}
+.ticker-item-interactive:hover .ticker-tooltip {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px); /* Efeito de "subida" */
+}
+
+
+/* --- AÇÕES DO USUÁRIO NO TOPNAV (configurações e menu) --- */
+.top-nav-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.user-menu-container {
+  position: relative;
+  margin-left: 20px; /* Espaçamento após o letreiro */
+}
 .user-menu-btn {
   background: none;
-  border: 1px solid transparent;
+  border: none;
   color: var(--text-secondary);
   display: flex;
   align-items: center;
@@ -107,56 +165,61 @@
   cursor: pointer;
   padding: 8px 12px;
   border-radius: 6px;
-  transition: background-color 0.2s ease, color 0.2s ease;
   font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
 }
-
 .user-menu-btn:hover {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
 }
-
-.user-icon {
-  font-size: 18px;
-}
-
-/* --- LETREIRO NO HEADER (CSS CORRIGIDO) --- */
-.ticker-container {
-  flex-grow: 1;
-  min-width: 0;
-  height: 30px; /* Dando um pouco de altura para a animação */
-  position: relative;
-}
-
-.ticker-message {
+.user-dropdown {
   position: absolute;
+  top: 140%;
+  right: 0;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Sombra mais suave */
+  width: 200px;
+  padding: 8px;
+  z-index: 1000;
+  animation: fadeInDropdown 0.2s ease-out;
+}
+@keyframes fadeInDropdown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.dropdown-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 4px 12px;
-  border-radius: 16px;
-  color: white;
+  padding: 10px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--text-primary);
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
   font-size: 14px;
-  font-weight: 500;
-  white-space: nowrap;
-  animation: fade-and-slide 5s ease-in-out forwards; /* Nome da animação e duração total */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.dropdown-item:hover {
+  background-color: var(--bg-primary);
+  color: var(--vexa-primary);
+}
+.dropdown-item svg {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+.dropdown-item:hover svg {
+  color: var(--vexa-primary);
 }
 
-.ticker-icon {
-  display: flex;
-  align-items: center;
-}
-
-/* Cores por tipo de mensagem */
-.ticker-message.alert { background-color: #FFC107; color: #333; }
-.ticker-message.warning { background-color: var(--logired-accent); }
-.ticker-message.info { background-color: #17A2B8; }
-.ticker-message.success { background-color: #28A745; }
-
-/* Animação corrigida */
-@keyframes fade-and-slide {
-  0% { opacity: 0; transform: translateY(100%); }   /* Começa invisível e abaixo */
-  20% { opacity: 1; transform: translateY(0); }     /* Entra na tela */
-  80% { opacity: 1; transform: translateY(0); }     /* Permanece visível */
-  100% { opacity: 0; transform: translateY(-100%); } /* Sai por cima */
+/* --- ÁREA DE CONTEÚDO PRINCIPAL --- */
+.content-wrapper {
+  flex-grow: 1;
+  padding: 24px;
+  overflow-y: auto;
 }

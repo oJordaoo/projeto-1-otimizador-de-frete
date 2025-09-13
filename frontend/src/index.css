@@ -1,31 +1,13 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Poppins', sans-serif;
-  color: var(--text-primary);
-}
-
 :root {
-  --logired-primary: #D32F2F;
-  --logired-dark: #B71C1C;
-  --logired-accent: #FF5252;
+  --vexa-primary: #2C3E50;
+  --vexa-accent: #1ABC9C;
+  --vexa-danger: #D32F2F;
   --bg-primary: #F4F6F8;
   --bg-secondary: #FFFFFF;
-  --text-primary: #172B4D;
-  --text-secondary: #6B778C;
+  --text-primary: #212B36;
+  --text-secondary: #637381;
   --border-color: #DFE1E6;
-  --logired-primary-rgb: 211, 47, 47;
+  --shadow-color: rgba(145, 158, 171, 0.2);
 }
 
 body.dark-mode {
@@ -36,7 +18,18 @@ body.dark-mode {
   --border-color: #303A48;
 }
 
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
 body {
+  font-family: 'Inter', sans-serif;
   background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
   color: var(--text-primary);
 }

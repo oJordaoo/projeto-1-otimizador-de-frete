@@ -1,49 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { FaUserCircle, FaSignOutAlt, FaExclamationTriangle, FaCheckCircle, FaInfoCircle } from 'react-icons/fa';
-import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
+import { FaExclamationTriangle, FaCheckCircle, FaInfoCircle } from 'react-icons/fa';
 import './Layout.css';
 
-const tickerMessages = [
-  { type: 'alert', text: "Alerta: VAN-007 com desvio de rota em 5km!", icon: <FaExclamationTriangle /> },
-  { type: 'warning', text: "Entrega #1024 (ABC-1234) - Previsão: HOJE 14:30 - Atraso: 15min", icon: <FaExclamationTriangle /> },
-  { type: 'info', text: "Novo Pedido de Entrega #1027 adicionado - Prioridade Alta", icon: <FaInfoCircle /> },
-  { type: 'success', text: "Motorista Ana Souza completou entrega #1023", icon: <FaCheckCircle /> },
+const tickerData = [
+    { type: 'success', text: "Entrega #1021 Concluída", icon: <FaCheckCircle />, link: '/app/entregas' },
+    { type: 'info', text: "Entrega #1022 Em Rota", icon: <FaInfoCircle />, link: '/app/entregas' },
+    { type: 'warning', text: "Entrega #1023 Atraso Potencial", icon: <FaExclamationTriangle />, link: '/app/entregas' },
+    { type: 'alert', text: "Alerta Crítico: VAN-007 com desvio de rota!", icon: <FaExclamationTriangle />, link: '/app/mapa' },
 ];
 
-function Header() {
-  const { logoutAction } = useAuth();
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-
+const Ticker = ({ items }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
   useEffect(() => {
-    const tickerInterval = setInterval(() => {
-      setCurrentMessageIndex(prevIndex => (prevIndex + 1) % tickerMessages.length);
-    }, 5000); // Troca a cada 5 segundos
-
-    return () => clearInterval(tickerInterval);
-  }, []);
-
-  const currentMessage = tickerMessages[currentMessageIndex];
-
+    const interval = setInterval(() => {
+      setCurrentIndex(prev => (prev + 1) % items.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [items]);
   return (
-    <header className="app-header">
-      <div className="header-left">
-        <div className="ticker-container">
-          {/* A 'key' é crucial para o React recriar o elemento e a animação funcionar */}
-          <div key={currentMessageIndex} className={`ticker-message ${currentMessage.type}`}>
-            <span className="ticker-icon">{currentMessage.icon}</span>
-            <span>{currentMessage.text}</span>
-          </div>
-        </div>
+    <div className="status-ticker-viewport">
+      <div className="status-ticker-list" style={{ transform: `translateY(-${currentIndex * 100}%)` }}>
+        {items.map((item, index) => (
+          <Link to={item.link} className="status-ticker-item-link" key={index}>
+            <div className={`status-ticker-item ${item.type}`}>
+                <span className="ticker-icon">{item.icon}</span>
+                <span>{item.text}</span>
+            </div>
+          </Link>
+        ))}
       </div>
-      <div className="header-right">
-        <button className="user-menu-btn">
-          <FaUserCircle className="user-icon" />
-          <span>Usuário</span>
-        </button>
-        <button onClick={logoutAction} className="user-menu-btn" title="Sair">
-          <FaSignOutAlt className="user-icon" />
-        </button>
-      </div>
+    </div>
+  );
+};
+
+function Header() {
+  return (
+    <header className="app-status-header">
+      <Ticker items={tickerData} />
     </header>
   );
 }

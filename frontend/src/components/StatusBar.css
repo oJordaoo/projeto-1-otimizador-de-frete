@@ -1,0 +1,41 @@
+.status-bar {
+    width: 100%;
+    height: 30px; /* Altura da barra de status */
+    background-color: var(--bg-primary); /* Fundo da barra */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Sombra sutil para destacar */
+    flex-shrink: 0; /* Impede que ele encolha */
+    z-index: 100; /* Garante que fique acima de tudo */
+}
+
+.status-bar .ticker-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 13px; /* Fonte um pouco menor */
+    font-weight: 500;
+    white-space: nowrap;
+    animation: fadeInOutStatusBar 5s ease-in-out infinite; /* Animação específica */
+    color: white; /* Cor padrão do texto */
+}
+
+/* Cores específicas para os tipos de mensagem, com fundo sólido */
+.status-bar .ticker-message.alert { background-color: #FFC107; color: #333; }
+.status-bar .ticker-message.warning { background-color: var(--logired-accent); }
+.status-bar .ticker-message.info { background-color: #17A2B8; }
+.status-bar .ticker-message.success { background-color: #28A745; }
+
+
+@keyframes fadeInOutStatusBar {
+    0%, 100% { opacity: 0; transform: translateY(100%); } /* Começa e termina fora da tela */
+    10% { opacity: 0; transform: translateY(100%); } /* Espera um pouco */
+    20% { opacity: 1; transform: translateY(0); } /* Entra */
+    80% { opacity: 1; transform: translateY(0); } /* Permanece */
+    90% { opacity: 0; transform: translateY(-100%); } /* Sai */
+}

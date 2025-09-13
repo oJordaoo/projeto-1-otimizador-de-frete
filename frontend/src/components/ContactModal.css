@@ -1,0 +1,100 @@
+.contact-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(18, 18, 18, 0.75);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 300ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+}
+
+.contact-modal {
+  position: relative;
+  background: var(--bg-secondary);
+  padding: 30px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  outline: none;
+  transform: scale(0.9);
+  transition: transform 300ms ease-in-out;
+}
+
+.ReactModal__Content--after-open {
+    transform: scale(1);
+}
+
+.ReactModal__Content--before-close {
+    transform: scale(0.9);
+}
+
+.contact-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.contact-modal-header h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.contact-modal-subtitle {
+    margin-bottom: 24px;
+    color: var(--text-secondary);
+}
+
+.contact-form .form-group {
+    margin-bottom: 20px;
+}
+
+.contact-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.contact-form input {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  font-size: 16px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
+  background-color: var(--logired-primary);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}

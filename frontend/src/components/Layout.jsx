@@ -1,18 +1,16 @@
 import React from 'react';
-import Sidebar from './Sidebar';
-import Header from './Header';
+import TopNav from './TopNav';
+// import Header from './Header'; // <-- REMOVA ESTA LINHA
 import './Layout.css';
 
 function Layout({ children }) {
   return (
-    <div className="app-layout">
-      <Sidebar />
-      <div className="main-content-area">
-        <Header />
-        <main className="content-wrapper">
-          {children}
-        </main>
-      </div>
+    <div className="app-layout-main">
+      <TopNav />
+      {/* <Header /> // <-- REMOVA ESTE COMPONENTE DA RENDERIZAÇÃO */}
+      <main className="content-wrapper">
+        {children}
+      </main>
     </div>
   );
 }

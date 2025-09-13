@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../pages/Planos.css'; // Podemos reutilizar o mesmo CSS
+import '../pages/Planos.css';
 
-const PlanosGrid = () => {
+const PlanosGrid = ({ onContactClick }) => {
   return (
     <div className="planos-container">
       <div className="planos-header">
@@ -72,7 +72,7 @@ const PlanosGrid = () => {
             </ul>
           </div>
           <div className="plano-card-footer">
-            <Link to="/contact" className="btn-plano">Fale Conosco</Link>
+            <button onClick={onContactClick} className="btn-plano">Fale Conosco</button>
           </div>
         </div>
       </div>

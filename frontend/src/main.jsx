@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
-import './index.css'; // <-- Garanta que esta linha existe
-import 'leaflet/dist/leaflet.css'; // <-- E esta, para o mapa
+import './index.css'; // Esta linha carrega os estilos globais
+import 'leaflet/dist/leaflet.css'; // Esta linha carrega os estilos do mapa
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

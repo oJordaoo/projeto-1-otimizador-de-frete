@@ -1,3 +1,5 @@
+/* --- ESTILOS DA LANDING PAGE (HomePage) --- */
+
 .home-page-container {
   min-height: 100vh;
   display: flex;
@@ -13,15 +15,11 @@
   width: 100%;
   z-index: 1000;
   border-bottom: 1px solid var(--border-color);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-light);
   position: fixed;
   top: 0;
   left: 0;
   transition: background-color 0.3s ease;
-}
-
-body.dark-mode .home-header {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .home-nav {
@@ -31,10 +29,10 @@ body.dark-mode .home-header {
 }
 
 .home-logo {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 28px;
-  font-weight: 700;
-  color: var(--logired-primary);
+  font-weight: 800;
+  color: var(--vexa-primary);
 }
 
 .home-menu {
@@ -52,12 +50,13 @@ body.dark-mode .home-header {
 .home-menu a {
   color: var(--text-secondary);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 15px;
   transition: color 0.3s ease;
 }
 
 .home-menu a:hover, .home-menu a.active {
-  color: var(--logired-primary);
+  color: var(--vexa-primary);
 }
 
 .home-actions {
@@ -70,18 +69,18 @@ body.dark-mode .home-header {
   border-radius: 6px;
   text-decoration: none;
   font-weight: 600;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
-  background-color: var(--logired-primary);
-  border: 1px solid var(--logired-primary);
+  background-color: var(--vexa-primary);
+  border: 1px solid var(--vexa-primary);
   color: #FFFFFF;
 }
 
 .btn-login:hover {
-  background-color: var(--logired-dark);
-  border-color: var(--logired-dark);
+  background-color: #2c3e50cc; /* Um pouco mais escuro no hover */
+  border-color: #2c3e50cc;
 }
 
 .home-hero {
@@ -91,8 +90,8 @@ body.dark-mode .home-header {
   padding: 60px 50px;
   gap: 60px;
   flex-wrap: wrap;
-  margin-top: 71px;
-  min-height: calc(100vh - 71px);
+  margin-top: 65px; /* Altura do header fixo */
+  min-height: calc(100vh - 65px);
 }
 
 .hero-content {
@@ -103,16 +102,16 @@ body.dark-mode .home-header {
 }
 
 .hero-tagline {
-  color: var(--logired-primary);
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
+  color: var(--vexa-primary);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
   margin-bottom: 10px;
   letter-spacing: 1px;
 }
 
 .hero-title {
   font-size: 52px;
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.2;
   margin-bottom: 20px;
 }
@@ -132,8 +131,8 @@ body.dark-mode .home-header {
 .hero-dashboard-wrapper {
   flex: 1;
   min-width: 450px;
-  max-width: 700px; /* AUMENTADO para dar um pouco mais de espaço */
-  height: 500px; /* ALTURA FIXA para o dashboard na landing page */
+  max-width: 700px;
+  height: 500px;
   position: relative;
   transition: transform 0.3s ease-out;
 }
@@ -144,10 +143,7 @@ body.dark-mode .home-header {
 
 .dashboard-cta {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background-color: rgba(22, 28, 38, 0.7);
   backdrop-filter: blur(4px);
   border-radius: 12px;
@@ -155,7 +151,7 @@ body.dark-mode .home-header {
   align-items: center;
   justify-content: center;
   color: white;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 20px;
   font-weight: 600;
   text-decoration: none;
@@ -223,7 +219,7 @@ body.dark-mode .home-header {
 
 .feature-icon {
   font-size: 36px;
-  color: var(--logired-primary);
+  color: var(--vexa-primary);
   margin-bottom: 20px;
 }
 
@@ -251,7 +247,7 @@ body.dark-mode .home-header {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: var(--logired-primary);
+    background-color: var(--vexa-primary);
     color: white;
     font-size: 24px;
     font-weight: 700;
