@@ -5,7 +5,7 @@ import {
   FaCalculator, FaChartPie, FaCog, FaUserCircle, FaSignOutAlt,
   FaCheckCircle, FaExclamationTriangle, FaInfoCircle
 } from 'react-icons/fa';
-import { useAuth } from '../context/AuthContext'; // Importe useAuth
+import { useAuth } from '../context/AuthContext';
 import './Layout.css';
 
 const tickerData = [
@@ -17,7 +17,7 @@ const tickerData = [
 ];
 
 function TopNav() {
-  const { logoutAction } = useAuth(); // Use o hook de autenticação
+  const { logoutAction } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -37,30 +37,28 @@ function TopNav() {
       <div className="top-nav-links">
         <NavLink to="/app/dashboard"><FaTachometerAlt /><span>Dashboard</span></NavLink>
         <NavLink to="/app/entregas"><FaTruck /><span>Entregas</span></NavLink>
-        <NavLink to="/app/frota"><FaCar /><span>Frota</span></NavLink>
+        <NavLink to="/app/veiculos"><FaCar /><span>Frota</span></NavLink>
         <NavLink to="/app/mapa"><FaMapMarkedAlt /><span>Mapa</span></NavLink>
         <NavLink to="/app/otimizacao"><FaCalculator /><span>Otimizador</span></NavLink>
         <NavLink to="/app/relatorios"><FaChartPie /><span>Relatórios</span></NavLink>
       </div>
 
-      {/* LETREIRO DE STATUS INTEGRADO AQUI */}
       <div className="header-ticker-interactive">
         <div className="ticker-track">
-          {[...tickerData, ...tickerData].map((item, index) => ( // Duplicamos para rolagem contínua
-            <Link key={index} to={item.link || "#"} className={`ticker-item-interactive ${item.type}`}>
+          {[...tickerData, ...tickerData].map((item, index) => (
+            <div key={index} className={`ticker-item-interactive ${item.type}`}>
               <span className="ticker-icon">{item.icon}</span>
               <span className="ticker-text-short">{item.text}</span>
               <div className="ticker-tooltip">
                 <p><strong>Detalhes:</strong></p>
                 <p>{item.details}</p>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>
       
       <div className="top-nav-actions">
-        {/* MENU DE USUÁRIO INTEGRADO AQUI */}
         <div className="user-menu-container" ref={menuRef}>
           <button className="user-menu-btn" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <FaUserCircle className="user-icon" />

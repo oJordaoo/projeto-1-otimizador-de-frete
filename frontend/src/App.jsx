@@ -4,24 +4,24 @@ import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
 
 // Páginas Públicas
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import Planos from './pages/Planos';
-import DashboardPreviewPage from './pages/DashboardPreviewPage';
+import HomePage from './pages/HomePage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import RegisterPage from './pages/RegisterPage.jsx';
+import Planos from './pages/Planos.jsx';
+import DashboardPreviewPage from './pages/DashboardPreviewPage.jsx';
 
 // Páginas Privadas
-import Dashboard from './pages/Dashboard';
-import Entregas from './pages/Entregas';
-import Veiculos from './pages/Veiculos'; // <--- NOME CORRETO DO ARQUIVO
-import Mapa from './pages/Mapa';
-import Otimizacao from './pages/Otimizacao';
-import Relatorios from './pages/Relatorios';
-import Configuracoes from './pages/Configuracoes';
+import Dashboard from './pages/Dashboard.jsx';
+import Entregas from './pages/Entregas.jsx';
+import Veiculos from './pages/Veiculos.jsx';
+import Mapa from './pages/Mapa.jsx';
+import Otimizacao from './pages/Otimizacao.jsx';
+import Relatorios from './pages/Relatorios.jsx';
+import Configuracoes from './pages/Configuracoes.jsx';
 
 // Componentes de Layout
-import PrivateRoute from './components/PrivateRoute';
-import Layout from './components/Layout';
+import PrivateRoute from './components/PrivateRoute.jsx';
+import Layout from './components/Layout.jsx';
 
 function App() {
   return (
@@ -46,26 +46,24 @@ function App() {
           <Route path="/planos" element={<Planos />} />
           <Route path="/preview" element={<DashboardPreviewPage />} />
           
-          {/* Agrupador para todas as rotas privadas */}
+          {/* Rotas Privadas */}
           <Route 
-            path="/app/*" 
+            path="/app" 
             element={
               <PrivateRoute>
-                <Layout>
-                  <Routes>
-                    <Route path="dashboard" element={<Dashboard />} />
-                    <Route path="entregas" element={<Entregas />} />
-                    <Route path="veiculos" element={<Veiculos />} /> {/* <-- NOME CORRETO DO COMPONENTE */}
-                    <Route path="mapa" element={<Mapa />} />
-                    <Route path="otimizacao" element={<Otimizacao />} />
-                    <Route path="relatorios" element={<Relatorios />} />
-                    <Route path="configuracoes" element={<Configuracoes />} />
-                    <Route index element={<Navigate to="dashboard" />} />
-                  </Routes>
-                </Layout>
+                <Layout />
               </PrivateRoute>
-            } 
-          />
+            }
+          >
+            <Route index element={<Navigate to="dashboard" />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="entregas" element={<Entregas />} />
+            <Route path="veiculos" element={<Veiculos />} />
+            <Route path="mapa" element={<Mapa />} />
+            <Route path="otimizacao" element={<Otimizacao />} />
+            <Route path="relatorios" element={<Relatorios />} />
+            <Route path="configuracoes" element={<Configuracoes />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </Router>

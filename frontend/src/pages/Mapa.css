@@ -1,144 +1,156 @@
+/* === Estilos da Página "Mapa ao Vivo" === */
+
+/* Variáveis de cor (assumindo que estão em um arquivo global como index.css) */
+:root {
+  --vexa-primary: #2C3E50;
+  --vexa-accent: #1ABC9C;
+  --vexa-danger: #D32F2F;
+  --bg-primary: #1a1d24;
+  --bg-secondary: #1f2630;
+  --bg-tertiary: #2a2f38;
+  --border-color: #3c424f;
+  --text-primary: #f0f2f5;
+  --text-secondary: #a0a8b5;
+  --text-white: #ffffff;
+  --status-em-rota: #3498DB; /* Azul para Em Rota */
+  --status-parado: #F1C40F;  /* Amarelo para Parado */
+  --status-atrasado: #E74C3C; /* Vermelho para Atrasado */
+}
+
+/* --- Layout Principal --- */
 .map-page-container {
   display: flex;
   height: 100%;
   width: 100%;
-  gap: 20px;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-primary);
 }
 
-/* --- Sidebar do Mapa --- */
+/* --- Painel Lateral (Sidebar) --- */
 .map-sidebar {
   width: 320px;
   flex-shrink: 0;
   background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .sidebar-section {
-  padding: 20px;
-}
-
-.sidebar-section + .sidebar-section {
-    border-top: 1px solid var(--border-color);
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .sidebar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
 }
 
 .sidebar-header h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-white);
   margin: 0;
-  font-size: 18px;
 }
 
-.filter-btn {
-  background: none;
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
+/* --- Lista de Veículos --- */
 .vehicle-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 300px;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .vehicle-item {
   display: flex;
   align-items: center;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 8px;
+  justify-content: space-between;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  background: var(--bg-tertiary);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
 }
 
-.vehicle-item:hover, .vehicle-item.active {
-  background-color: var(--bg-primary);
+.vehicle-item:hover {
+  border-color: var(--vexa-accent);
+  transform: translateX(4px);
 }
 
 .vehicle-item.active {
-    box-shadow: inset 3px 0 0 var(--logired-primary);
+  background: rgba(26, 188, 156, 0.15);
+  border-color: var(--vexa-accent);
 }
 
 .vehicle-item-icon {
-  font-size: 20px;
+  font-size: 1.6rem;
   color: var(--text-secondary);
-  margin-right: 15px;
 }
 
-.vehicle-item-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.vehicle-plate {
+.vehicle-item-info .plate {
   font-weight: 600;
+  font-size: 1rem;
   color: var(--text-primary);
 }
 
-.vehicle-status {
-  font-size: 12px;
-  font-weight: 500;
-  padding: 2px 6px;
-  border-radius: 10px;
+.status-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 12px;
+  color: var(--text-white);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
   width: fit-content;
 }
 
-/* Cores de Status para os veículos na lista */
-.status-em-rota { color: #0A58CA; background-color: #CCE5FF; }
-.status-parado { color: #664D03; background-color: #FFF3CD; }
-.status-atrasado { color: var(--logired-dark); background-color: #F8D7DA; }
-body.dark-mode .status-em-rota { background-color: #0A58CA; color: #CCE5FF; }
-body.dark-mode .status-parado { background-color: #664D03; color: #FFF3CD; }
-body.dark-mode .status-atrasado { background-color: #58151C; color: #F8D7DA; }
+.status-tag.em-rota { background-color: var(--status-em-rota); }
+.status-tag.parado { background-color: var(--status-parado); color: #222; }
+.status-tag.atrasado { background-color: var(--status-atrasado); }
 
-
-.vehicle-details {
-    animation: fadeIn 0.5s ease;
+/* Detalhes do veículo */
+.vehicle-details-panel {
+  animation: fadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+.details-item {
+  margin-bottom: 1rem;
 }
 
-.vehicle-details p {
-    margin-bottom: 10px;
-    color: var(--text-secondary);
+.details-item .label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.2rem;
 }
-.vehicle-details strong {
-    color: var(--text-primary);
+
+.details-item .value {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
 }
 
 .close-details-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    color: var(--text-secondary);
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.close-details-btn:hover {
+  color: var(--text-white);
 }
 
-/* --- Conteúdo Principal do Mapa --- */
-.map-main-content {
+/* Área do mapa */
+.map-main-area {
   flex-grow: 1;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: var(--shadow-light);
+  position: relative;
 }
 
 .live-map-container {
@@ -146,30 +158,56 @@ body.dark-mode .status-atrasado { background-color: #58151C; color: #F8D7DA; }
   height: 100%;
 }
 
-/* --- Estilos dos Ícones no Mapa --- */
-.vehicle-marker-icon .vehicle-icon-wrapper {
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 3px solid white;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    animation: pulse 2.5s infinite ease-in-out;
+/* Ícones customizados */
+.route-marker {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 8px rgba(0,0,0,0.5);
+}
+.route-marker.start { background-color: #2ECC71; }
+.route-marker.end { background-color: var(--vexa-danger); }
+
+.vehicle-map-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  border: 2px solid white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.7);
+}
+.vehicle-map-icon svg {
+  width: 20px;
+  height: 20px;
+  color: white;
 }
 
-.vehicle-icon-wrapper svg {
-    width: 20px;
-    height: 20px;
-}
-/* Cores de Status para os ícones no mapa */
-.vehicle-icon-wrapper.status-em-rota { background-color: #2196F3; }
-.vehicle-icon-wrapper.status-parado { background-color: #FFC107; }
-.vehicle-icon-wrapper.status-atrasado { background-color: var(--logired-primary); }
+.vehicle-map-icon.em-rota { background-color: var(--status-em-rota); }
+.vehicle-map-icon.parado { background-color: var(--status-parado); }
+.vehicle-map-icon.atrasado { background-color: var(--status-atrasado); }
 
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
-  70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+/* Popups do mapa */
+.leaflet-popup-content-wrapper {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-radius: 10px !important;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+}
+
+.leaflet-popup-content {
+  margin: 0.8rem 1rem !important;
+  font-size: 0.85rem;
+}
+
+.leaflet-popup-tip {
+  background: var(--bg-secondary) !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

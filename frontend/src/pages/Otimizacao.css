@@ -1,187 +1,142 @@
-.optimizer-page {
+/* === Variáveis de Estilo (Consistente com o resto do app) === */
+:root {
+  --bg-primary: #1a1d24;
+  --bg-secondary: #2a2f38;
+  --bg-tertiary: #20232a;
+  --border-color: #3c424f;
+  --text-primary: #f0f2f5;
+  --text-secondary: #a0a8b5;
+  --text-white: #ffffff;
+  --accent-primary: #00aaff;
+  --accent-secondary: #00e6a1;
+  --font-main: "Inter", sans-serif;
+}
+
+/* === Estrutura Principal da Página de Otimização === */
+.optimizer-page-container {
   display: grid;
-  grid-template-columns: 1fr 1fr 2fr; /* 3 colunas */
-  gap: 20px;
-  height: calc(100vh - 70px - 48px); /* Altura da tela - header - padding */
-}
-
-.optimizer-column {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.column-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-shrink: 0;
-}
-.column-header h3 {
-  margin: 0;
-  font-size: 18px;
-}
-.column-header span {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.selection-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  overflow-y: auto;
-  flex-grow: 1;
-}
-
-.selection-list li {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  border: 1px solid var(--border-color);
-  transition: background-color 0.2s ease;
-}
-.selection-list li:hover {
+  grid-template-columns: 400px 1fr; /* Painel de controle com 400px */
+  height: 100%;
+  width: 100%;
+  font-family: var(--font-main);
   background-color: var(--bg-primary);
 }
 
-.checkbox {
-  font-size: 20px;
-  color: var(--logired-primary);
-  margin-right: 15px;
-}
+/* === Painel de Controle (Esquerda) === */
+.control-panel { background-color: var(--bg-secondary); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; height: 100%; }
+.panel-header { padding: 1.25rem; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+.panel-header h1 { font-size: 1.5rem; font-weight: 700; color: var(--text-black); margin: 0; }
+.panel-content { padding: 1.25rem; overflow-y: auto; flex-grow: 1; }
+.config-step { margin-bottom: 2rem; }
+.config-step h2 { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.selection-list { max-height: 200px; overflow-y: auto; padding-right: 0.5rem; border: 1px solid var(--border-color); border-radius: 8px; }
+.selection-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid var(--border-color); cursor: pointer; }
+.selection-item:last-child { border-bottom: none; }
+.selection-item input[type="checkbox"] { width: 18px; height: 18px; }
+.item-details p { margin: 0; font-size: 0.9rem; color: var(--text-primary); }
+.item-details span { font-size: 0.8rem; color: var(--text-secondary); }
+.panel-footer { padding: 1.25rem; border-top: 1px solid var(--border-color); background-color: var(--bg-secondary); box-shadow: 0 -4px 15px rgba(0,0,0,0.2); }
 
-.item-info {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
+.optimize-btn { width: 100%; padding: 1rem; font-size: 1.1rem; font-weight: 700; color: var(--text-white); background-color: var(--accent-primary); border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; }
+.optimize-btn:hover { background-color: #0095e0; }
 
-.item-title {
-  font-weight: 600;
-}
+/* === Área do Mapa (Direita) === */
+.map-area { position: relative; }
+.map-area .live-map-container { width: 100%; height: 100%; }
 
-.item-subtitle {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
-.vehicle-type-icon {
-    color: var(--text-secondary);
-    font-size: 24px;
-}
-
-.optimization-goal {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.optimize-button, .dispatch-button {
+/* === REIMAGINADO: Overlay de Loading e Resultados === */
+.optimization-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  padding: 14px;
-  font-size: 16px;
-  font-weight: 600;
-  color: white;
-  background-color: var(--logired-primary);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  margin-top: auto; /* Empurra para o final */
-}
-.optimize-button:hover, .dispatch-button:hover {
-  background-color: var(--logired-dark);
-}
-.optimize-button:disabled {
-    background-color: var(--text-secondary);
-    cursor: not-allowed;
+  height: 100%;
+  background: linear-gradient(to bottom, #0F2027, #203A43, #2C5364);
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: fadeIn 0.5s ease;
 }
 
-.result-column {
-    justify-content: center;
-    align-items: center;
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- Animação de Loading --- */
+.loading-animation h3 { font-size: 1.5rem; color: var(--text-white); margin-bottom: 1rem; }
+
+/* --- REIMAGINADO: Tela de Resultados --- */
+.results-summary {
+  width: 100%;
+  max-width: 800px;
+  background: rgba(28, 31, 38, 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 2.5rem 3rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: slideInUp 0.6s ease-out;
+  text-align: center;
 }
 
-.loading-spinner {
-    font-weight: 600;
-    color: var(--text-secondary);
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 0.5rem;
 }
 
-.result-content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    animation: fadeIn 0.5s ease;
+.results-subheader {
+  font-size: 1.1rem;
+  color: #9CA3AF; /* Cor secundária especificada */
+  margin-bottom: 2.5rem;
 }
 
-.result-summary {
-    display: flex;
-    justify-content: space-around;
-    padding-bottom: 15px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid var(--border-color);
-    flex-shrink: 0;
-}
-.summary-item {
-    text-align: center;
-}
-.summary-item span {
-    display: block;
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--logired-primary);
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem; /* Espaçamento aumentado */
+  margin-bottom: 2.5rem;
 }
 
-.result-map {
-    flex-grow: 1;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 15px;
-}
-.optimizer-map-container {
-    width: 100%;
-    height: 100%;
+.kpi-card {
+  background-color: transparent; /* Fundo transparente dentro da caixa */
+  padding: 1rem;
+  border-radius: 12px;
+  border: none; /* Borda removida para um look mais limpo */
 }
 
-.numbered-marker {
-    background-color: white;
-    border: 2px solid var(--text-primary);
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 12px;
+.kpi-card .label { 
+  font-size: 1rem; 
+  font-weight: 500;
+  color: #9CA3AF; /* Cor secundária especificada */
+  margin-bottom: 0.5rem; 
+}
+.kpi-card .value { 
+  font-size: 1.5rem; 
+  font-weight: 700; 
+  color: var(--text-white); 
 }
 
-.route-details-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 15px 0;
-    font-size: 14px;
+.kpi-card .value span { 
+  font-size: 1rem; 
+  color: #10B981; /* Verde de sucesso especificado */
 }
 
-.route-details-list li {
-    padding: 8px;
-    border-left: 4px solid;
-    margin-bottom: 5px;
-    background-color: var(--bg-primary);
-}
-.route-details-list span {
-    display: block;
-    font-size: 12px;
-    color: var(--text-secondary);
+
+
+/* Responsividade para a grid de KPIs */
+@media (max-width: 768px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .results-summary {
+    padding: 2rem;
+  }
 }

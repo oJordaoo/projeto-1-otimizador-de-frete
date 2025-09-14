@@ -1,121 +1,159 @@
-import React, { useState, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import React, { useState, useMemo } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { FaTruck, FaFilter, FaTimes } from 'react-icons/fa';
-import { FaVanShuttle } from 'react-icons/fa6';
+import { FaTruck, FaRoute, FaExclamationTriangle, FaRegClock, FaFilter } from 'react-icons/fa';
+import { FaVanShuttle } from 'react-icons/fa6'; // CORRIGIDO: Importação de FaVanShuttle
+
+import 'leaflet/dist/leaflet.css';
 import './Mapa.css';
 
-// --- ÍCONES CUSTOMIZADOS PARA OS VEÍCULOS ---
-const truckIconSvg = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 10.5H19V9C19 8.44772 18.5523 8 18 8H15C14.4477 8 14 8.44772 14 9V11H8.5V9C8.5 8.44772 8.05228 8 7.5 8H4.5C3.94772 8 3.5 8.44772 3.5 9V15H4.5C4.5 14.1716 5.17157 13.5 6 13.5C6.82843 13.5 7.5 14.1716 7.5 15H17.5C17.5 14.1716 18.1716 13.5 19 13.5C19.8284 13.5 20.5 14.1716 20.5 15H22V10.5ZM6 15.5C5.44772 15.5 5 15.9477 5 16.5C5 17.0523 5.44772 17.5 6 17.5C6.55228 17.5 7 17.0523 7 16.5C7 15.9477 6.55228 15.5 6 15.5ZM19 15.5C18.4477 15.5 18 15.9477 18 16.5C18 17.0523 18.4477 17.5 19 17.5C19.5523 17.5 20 17.0523 20 16.5C20 15.9477 19.5523 15.5 19 15.5Z" fill="white"/></svg>`;
-const vanIconSvg = `<svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M21.5 16H2.5C1.94772 16 1.5 15.5523 1.5 15V10C1.5 9.44772 1.94772 9 2.5 9H21.5C22.0523 9 22.5 9.44772 22.5 10V15C22.5 15.5523 22.0523 16 21.5 16ZM5 18.5C4.17157 18.5 3.5 17.8284 3.5 17C3.5 16.1716 4.17157 15.5 5 15.5C5.82843 15.5 6.5 16.1716 6.5 17C6.5 17.8284 5.82843 18.5 5 18.5ZM19 18.5C18.1716 18.5 17.5 17.8284 17.5 17C17.5 16.1716 18.1716 15.5 19 15.5C19.8284 15.5 20.5 16.1716 20.5 17C20.5 17.8284 19.8284 18.5 19 18.5Z" fill="white"/></svg>`;
-
-const createVehicleIcon = (iconSvg, status) => {
-  const colorClass = `status-${status.toLowerCase().replace(' ', '-')}`;
-  return L.divIcon({
-    html: `<div class="vehicle-icon-wrapper ${colorClass}">${iconSvg}</div>`,
-    className: 'vehicle-marker-icon',
-    iconSize: [40, 40],
-    iconAnchor: [20, 20],
-  });
-};
-
-// --- DADOS FAKES PARA O MAPA ---
+// --- DADOS FAKES ---
 const rotasFake = [
-    { id: 1, tipo: 'caminhao', placa: 'RDR-2025', motorista: 'Ana Souza', status: 'Em Rota', path: [[-25.40, -49.30], [-25.35, -49.25], [-25.42, -49.20]] },
-    { id: 2, tipo: 'van', placa: 'VAN-007', motorista: 'Bruno Costa', status: 'Parado', path: [[-25.48, -49.22], [-25.45, -49.28]] },
-    { id: 3, tipo: 'caminhao', placa: 'LOG-1234', motorista: 'Carlos Lima', status: 'Atrasado', path: [[-25.30, -49.28], [-25.35, -49.32], [-25.40, -49.25], [-25.45, -49.19]] },
+  { id: 1, tipo: 'caminhao', placa: 'RDR-2025', motorista: 'Ana Souza', status: 'Em Rota', progresso: 75, path: [[-25.40, -49.30], [-25.35, -49.25], [-25.42, -49.20]], carga: 'Eletrônicos', proximaParada: 'Centro de Distribuição' },
+  { id: 2, tipo: 'van', placa: 'VAN-007', motorista: 'Bruno Costa', status: 'Parado', progresso: 20, path: [[-25.48, -49.22], [-25.45, -49.28]], carga: 'Alimentos Perecíveis', proximaParada: 'Supermercado A' },
+  { id: 3, tipo: 'caminhao', placa: 'LOG-1234', motorista: 'Carlos Lima', status: 'Atrasado', progresso: 50, path: [[-25.30, -49.28], [-25.35, -49.32], [-25.40, -49.25], [-25.45, -49.19]], carga: 'Material de Construção', proximaParada: 'Obra B' },
+  { id: 4, tipo: 'van', placa: 'FRT-456', motorista: 'Daniela Alves', status: 'Em Rota', progresso: 90, path: [[-25.50, -49.35], [-25.52, -49.30]], carga: 'Pacotes E-commerce', proximaParada: 'Residência C' },
 ];
 
-function Mapa() {
-  const [activeVehicle, setActiveVehicle] = useState(null);
-  const mapRef = useRef();
+// --- COMPONENTES DO NOVO LAYOUT ---
 
-  const handleVehicleClick = (veiculo) => {
-    setActiveVehicle(veiculo);
-    if (mapRef.current) {
-      mapRef.current.flyTo(veiculo.path[0], 14);
-    }
-  };
+const KpiCard = ({ title, value, icon }) => (
+  <div className="map-kpi-card">
+    <div className="title">{icon} {title}</div>
+    <div className="value">{value}</div>
+  </div>
+);
+
+const VehicleCard = ({ vehicle, onClick, isActive }) => {
+  const statusClassName = `status-${vehicle.status.toLowerCase().replace(' ', '-')}`;
+  return (
+    <li className={`vehicle-card ${isActive ? 'active' : ''}`} onClick={() => onClick(vehicle)}>
+      <div className="card-main-info">
+        <div className="card-vehicle-icon">
+          {vehicle.tipo === 'caminhao' ? <FaTruck /> : <FaVanShuttle />}
+        </div>
+        <div className="card-vehicle-details">
+          <div className="plate">{vehicle.placa}</div>
+          <div className="driver">{vehicle.motorista}</div>
+        </div>
+        <div className={`status-badge ${statusClassName}`}>
+          <span className="dot"></span>
+          <span>{vehicle.status}</span>
+        </div>
+      </div>
+      <div className="card-progress-section">
+        <div className="progress-bar-bg">
+          <div className="progress-bar-fill" style={{ width: `${vehicle.progresso}%` }}></div>
+        </div>
+      </div>
+    </li>
+  );
+};
+
+const VehicleDetails = ({ vehicle }) => (
+  <div className="vehicle-details-card">
+    <h3 className="card-title">Detalhes do Veículo</h3>
+    <div className="details-info-grid">
+      <div className="info-item"><div className="label">Placa</div><div className="value">{vehicle.placa}</div></div>
+      <div className="info-item"><div className="label">Status</div><div className="value">{vehicle.status}</div></div>
+      <div className="info-item"><div className="label">Motorista</div><div className="value">{vehicle.motorista}</div></div>
+      <div className="info-item"><div className="label">Progresso</div><div className="value">{vehicle.progresso}%</div></div>
+    </div>
+    <div className="info-item" style={{ marginBottom: '1rem' }}>
+      <div className="label">Próxima Parada</div>
+      <div className="value">{vehicle.proximaParada}</div>
+    </div>
+    <button className="btn btn-secondary" style={{width: '100%'}}>Ver Rota Completa</button>
+  </div>
+);
+
+// Marcadores de Início e Fim da Rota
+const createRouteMarker = (type) => L.divIcon({
+  className: `route-marker ${type}`,
+  iconSize: [12, 12]
+});
+
+const createVehicleMarkerIcon = (vehicle, isActive) => {
+  const iconType = vehicle.tipo === 'caminhao' ? 'truck' : 'van';
+  const statusClass = `status-${vehicle.status.toLowerCase().replace(' ', '-')}`;
+  const truckSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm13.5-8.5l1.96 2.5H17V9.5h3.5zM18 18c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>';
+  const vanSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11C5.84 5 5.28 5.42 5.08 6.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>';
+  return L.divIcon({ html: `<div class="vehicle-map-icon ${statusClass}">${iconType === 'truck' ? truckSvg : vanSvg}</div>`, className: '', iconSize: [36, 36], iconAnchor: [18, 36], popupAnchor: [0, -36] });
+};
+
+function FlyToVehicle({ vehicle }) {
+  const map = useMap();
+  if (vehicle) { map.flyTo(vehicle.path[0], 15, { animate: true, duration: 1 }); }
+  return null;
+}
+
+// --- COMPONENTE PRINCIPAL DA PÁGINA ---
+
+function Mapa() {
+  const [activeVehicle, setActiveVehicle] = useState(rotasFake[0]);
+
+  const kpiValues = useMemo(() => ({
+    emRota: rotasFake.filter(v => v.status === 'Em Rota').length,
+    parados: rotasFake.filter(v => v.status === 'Parado').length,
+    atrasados: rotasFake.filter(v => v.status === 'Atrasado').length,
+    total: rotasFake.length,
+  }), [rotasFake]);
 
   return (
-    <div className="map-page-container">
-      <aside className="map-sidebar">
-        <div className="sidebar-section">
-          <div className="sidebar-header">
-            <h3>Frota Ativa</h3>
-            <button className="filter-btn"><FaFilter /> Filtrar</button>
-          </div>
-          <ul className="vehicle-list">
-            {rotasFake.map(veiculo => (
-              <li 
-                key={veiculo.id} 
-                className={`vehicle-item ${activeVehicle?.id === veiculo.id ? 'active' : ''}`}
-                onClick={() => handleVehicleClick(veiculo)}
-              >
-                <div className="vehicle-item-icon">
-                  {veiculo.tipo === 'caminhao' ? <FaTruck /> : <FaVanShuttle />}
-                </div>
-                <div className="vehicle-item-info">
-                  <span className="vehicle-plate">{veiculo.placa}</span>
-                  <span className={`vehicle-status status-${veiculo.status.toLowerCase().replace(' ', '-')}`}>
-                    {veiculo.status}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-        
-        {activeVehicle && (
-          <div className="sidebar-section vehicle-details">
-             <div className="sidebar-header">
-                <h3>Detalhes do Veículo</h3>
-                <button onClick={() => setActiveVehicle(null)} className="close-details-btn"><FaTimes /></button>
-            </div>
-            <p><strong>Placa:</strong> {activeVehicle.placa}</p>
-            <p><strong>Motorista:</strong> {activeVehicle.motorista}</p>
-            <p><strong>Status:</strong> {activeVehicle.status}</p>
-            <p><strong>Próxima Parada:</strong> {activeVehicle.path[1].join(', ')}</p>
-          </div>
-        )}
-      </aside>
-      <main className="map-main-content">
-        <MapContainer 
-          center={[-25.43, -49.25]} 
-          zoom={12} 
-          className="live-map-container"
-          ref={mapRef}
-        >
-          <TileLayer
-            url="https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png"
-          />
+    <div className="map-dashboard-grid">
+      <div className="map-kpi-row">
+        <KpiCard title="Veículos em Rota" value={kpiValues.emRota} icon={<FaRoute />} />
+        <KpiCard title="Veículos Parados" value={kpiValues.parados} icon={<FaRegClock />} />
+        <KpiCard title="Veículos Atrasados" value={kpiValues.atrasados} icon={<FaExclamationTriangle />} />
+        <KpiCard title="Total na Frota Ativa" value={kpiValues.total} icon={<FaTruck />} />
+      </div>
+
+      <div className="map-main-card">
+        <MapContainer center={activeVehicle.path[0]} zoom={14} className="live-map-container" zoomControl={false}>
+          <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>' url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
           {rotasFake.map(rota => (
             <React.Fragment key={`route-${rota.id}`}>
-              <Polyline 
-                pathOptions={{ 
-                  color: 'var(--logired-primary)', 
-                  weight: 3, 
-                  opacity: 0.7, 
-                  dashArray: '8, 8' 
-                }} 
-                positions={rota.path} 
-              />
-              <Marker
-                position={rota.path[0]}
-                icon={createVehicleIcon(
-                  rota.tipo === 'caminhao' ? truckIconSvg : vanIconSvg,
-                  rota.status
-                )}
+              {/* Linha da Rota */}
+              <Polyline positions={rota.path} color={rota.status === 'Atrasado' ? 'var(--status-atrasado)' : 'var(--vexa-primary)'} weight={4} />
+
+              {/* Marcadores de Início e Fim */}
+              <Marker position={rota.path[0]} icon={createRouteMarker('start')} />
+              <Marker position={rota.path[rota.path.length - 1]} icon={createRouteMarker('end')} />
+
+              {/* Ícone do Veículo */}
+              <Marker 
+                position={rota.path[0]} 
+                icon={createVehicleIcon(rota)}
+                eventHandlers={{ click: () => setActiveVehicle(rota) }}
               >
                 <Popup>
-                  <strong>{rota.placa}</strong><br />
-                  {rota.motorista} - {rota.status}
+                  <b>{rota.placa}</b><br />
+                  Motorista: {rota.motorista}<br />
+                  Status: {rota.status}
                 </Popup>
               </Marker>
             </React.Fragment>
           ))}
+
+          <FlyToVehicle vehicle={activeVehicle} />
         </MapContainer>
-      </main>
+      </div>
+
+      <div className="map-side-panel">
+        <div className="fleet-list-card">
+          <h3 className="card-title">Frota Ativa</h3>
+          <ul className="vehicle-list">
+            {rotasFake.map(v => (
+              <VehicleCard 
+                key={v.id} 
+                vehicle={v} 
+                onClick={setActiveVehicle} 
+                isActive={v.id === activeVehicle?.id} />
+            ))}
+          </ul>
+        </div>
+        {activeVehicle && <VehicleDetails vehicle={activeVehicle} />}
+      </div>
     </div>
   );
 }

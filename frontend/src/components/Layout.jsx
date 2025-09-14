@@ -1,15 +1,14 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import TopNav from './TopNav';
-// import Header from './Header'; // <-- REMOVA ESTA LINHA
 import './Layout.css';
 
-function Layout({ children }) {
+function Layout() {
   return (
     <div className="app-layout-main">
       <TopNav />
-      {/* <Header /> // <-- REMOVA ESTE COMPONENTE DA RENDERIZAÇÃO */}
       <main className="content-wrapper">
-        {children}
+        <Outlet /> {/* As páginas serão renderizadas aqui */}
       </main>
     </div>
   );

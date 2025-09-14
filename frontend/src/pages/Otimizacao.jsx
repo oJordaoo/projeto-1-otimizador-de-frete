@@ -1,157 +1,183 @@
-import React, { useState } from 'react';
-import { MapContainer, TileLayer, Polyline, Marker, Popup } from 'react-leaflet';
-// A CORREÇÃO ESTÁ NESTAS DUAS LINHAS ABAIXO
-import { FaTruck, FaCheckSquare, FaSquare } from 'react-icons/fa';
-import { FaVanShuttle } from 'react-icons/fa6';
+import React, { useState, useMemo } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
+import { FaBoxOpen, FaTruck, FaCog, FaCheckCircle } from 'react-icons/fa';
+
+import 'leaflet/dist/leaflet.css';
 import './Otimizacao.css';
 
 // --- DADOS FAKES PARA A SIMULAÇÃO ---
-const entregasPendentesFake = [
-  { id: 'e1', endereco: 'R. das Flores, 123', peso: 50, volume: 0.5, pos: [-25.42, -49.27] },
-  { id: 'e2', endereco: 'Av. Brasil, 789', peso: 120, volume: 1.2, pos: [-25.45, -49.29] },
-  { id: 'e3', endereco: 'Al. dos Anjos, 456', peso: 25, volume: 0.2, pos: [-25.43, -49.24] },
-  { id: 'e4', endereco: 'R. XV de Novembro, 1000', peso: 80, volume: 0.8, pos: [-25.41, -49.26] },
-  { id: 'e5', endereco: 'Av. das Torres, 2020', peso: 200, volume: 2.0, pos: [-25.47, -49.21] },
+const fakeDeliveries = [
+  { id: 'd1', address: 'R. da Glória, 123', volume: 2, lat: -25.43, lng: -49.27 },
+  { id: 'd2', address: 'Av. Cândido de Abreu, 456', volume: 1, lat: -25.42, lng: -49.26 },
+  { id: 'd3', address: 'Al. Dr. Muricy, 789', volume: 5, lat: -25.435, lng: -49.275 },
+  { id: 'd4', address: 'R. XV de Novembro, 101', volume: 3, lat: -25.428, lng: -49.272 },
+  { id: 'd5', address: 'Av. Batel, 202', volume: 4, lat: -25.445, lng: -49.29 },
 ];
-const frotaDisponivelFake = [
-  { id: 'v1', tipo: 'caminhao', placa: 'ABC-1234', capacidade_kg: 1000 },
-  { id: 'v2', tipo: 'van', placa: 'VAN-007', capacidade_kg: 500 },
-];
-const resultadoOtimizacaoFake = {
-  resumo: { rotas: 2, distancia_total: 127, tempo_estimado: "4h 35min", economia: "18%" },
-  rotas: [
-    { veiculo_id: 'v1', placa: 'ABC-1234', entregas: ['e4', 'e1'], path: [[-25.41, -49.26], [-25.42, -49.27]], cor: '#D32F2F' },
-    { veiculo_id: 'v2', placa: 'VAN-007', entregas: ['e3', 'e2', 'e5'], path: [[-25.43, -49.24], [-25.45, -49.29], [-25.47, -49.21]], cor: '#2196F3' }
-  ]
-};
 
-const createNumberedIcon = (number) => {
-    return L.divIcon({
-        html: `<div class="numbered-marker">${number}</div>`,
-        className: 'numbered-marker-container',
-        iconSize: [24, 24],
-        iconAnchor: [12, 12]
-    });
-};
+const fakeFleet = [
+  { id: 'v1', name: 'VAN-001', capacity: 10 },
+  { id: 'v2', name: 'VAN-002', capacity: 10 },
+  { id: 'v3', name: 'CAM-001', capacity: 25 },
+];
+
+// --- COMPONENTES ---
+
+const SelectionList = ({ title, icon, items, selectedItems, onToggle }) => (
+  <div className="config-step">
+    <h2>{icon} {title}</h2>
+    <div className="selection-list">
+      {items.map(item => (
+        <div key={item.id} className="selection-item" onClick={() => onToggle(item.id)}>
+          <input 
+            type="checkbox" 
+            checked={selectedItems.includes(item.id)} 
+            readOnly 
+          />
+          <div className="item-details">
+            <p>{item.address || item.name}</p>
+            <span>{item.volume ? `Volume: ${item.volume}m³` : `Capacidade: ${item.capacity}m³`}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const LoadingOverlay = () => (
+  <div className="optimization-overlay">
+    <div className="loading-animation">
+      <h3>Otimizando Rotas...</h3>
+      <p style={{color: 'var(--text-secondary)'}}>Aguarde, estamos encontrando o melhor caminho para sua frota.</p>
+    </div>
+  </div>
+);
+
+const ResultsOverlay = ({ stats, onReset }) => (
+  <div className="optimization-overlay">
+    <div className="results-summary">
+      <h2 className="results-header">
+        <FaCheckCircle />
+        <span>Otimização Concluída!</span>
+      </h2>
+      <p className="results-subheader">Encontramos as melhores rotas para suas entregas e frota selecionada.</p>
+      <div className="kpi-grid">
+        <div className="kpi-card">
+          <div className="label">Custo Total</div>
+          <div className="value">R$ {stats.cost} <span>(-{stats.costSavings}%)</span></div>
+        </div>
+        <div className="kpi-card">
+          <div className="label">Distância Total</div>
+          <div className="value">{stats.distance} km</div>
+        </div>
+        <div className="kpi-card">
+          <div className="label">Veículos Utilizados</div>
+          <div className="value">{stats.vehiclesUsed}</div>
+        </div>
+      </div>
+      <div className="results-actions">
+        <button className="results-btn" onClick={onReset}>Planejar Nova Otimização</button>
+      </div>
+    </div>
+  </div>
+);
+
+// --- PÁGINA PRINCIPAL ---
 
 function Otimizacao() {
-  const [selectedEntregas, setSelectedEntregas] = useState(new Set());
-  const [selectedVeiculos, setSelectedVeiculos] = useState(new Set());
-  const [isOptimizing, setIsOptimizing] = useState(false);
-  const [result, setResult] = useState(null);
+  const [selectedDeliveries, setSelectedDeliveries] = useState([]);
+  const [selectedFleet, setSelectedFleet] = useState([]);
+  const [optimizationStatus, setOptimizationStatus] = useState('idle'); // idle, loading, success
 
-  const handleToggleEntrega = (id) => {
-    const newSelection = new Set(selectedEntregas);
-    if (newSelection.has(id)) newSelection.delete(id);
-    else newSelection.add(id);
-    setSelectedEntregas(newSelection);
-  };
-  
-  const handleToggleVeiculo = (id) => {
-    const newSelection = new Set(selectedVeiculos);
-    if (newSelection.has(id)) newSelection.delete(id);
-    else newSelection.add(id);
-    setSelectedVeiculos(newSelection);
+  const handleToggleDelivery = (id) => {
+    setSelectedDeliveries(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
   };
 
-  const handleOptimize = () => {
-    setIsOptimizing(true);
-    setResult(null);
+  const handleToggleFleet = (id) => {
+    setSelectedFleet(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const runOptimization = () => {
+    setOptimizationStatus('loading');
+    // Simula uma chamada de API que demora 3 segundos
     setTimeout(() => {
-      setResult(resultadoOtimizacaoFake);
-      setIsOptimizing(false);
-    }, 2000);
+      setOptimizationStatus('success');
+    }, 3000);
+  };
+
+  const resetOptimization = () => {
+    setOptimizationStatus('idle');
+    setSelectedDeliveries([]);
+    setSelectedFleet([]);
+  };
+
+  // Dados fakes para os resultados
+  const fakeResults = {
+    cost: '480,00', costSavings: 22, distance: 127, vehiclesUsed: 2
   };
 
   return (
-    <div className="optimizer-page">
-      <div className="optimizer-column">
-        <div className="column-header">
-          <h3>1. Selecione as Entregas Pendentes</h3>
-          <span>({selectedEntregas.size} selecionadas)</span>
-        </div>
-        <ul className="selection-list">
-          {entregasPendentesFake.map(entrega => (
-            <li key={entrega.id} onClick={() => handleToggleEntrega(entrega.id)}>
-              <div className="checkbox">{selectedEntregas.has(entrega.id) ? <FaCheckSquare /> : <FaSquare />}</div>
-              <div className="item-info">
-                <span className="item-title">{entrega.endereco}</span>
-                <span className="item-subtitle">{entrega.peso} kg / {entrega.volume} m³</span>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="optimizer-column">
-        <div className="column-header">
-          <h3>2. Selecione a Frota</h3>
-          <span>({selectedVeiculos.size} selecionados)</span>
-        </div>
-        <ul className="selection-list">
-          {frotaDisponivelFake.map(veiculo => (
-            <li key={veiculo.id} onClick={() => handleToggleVeiculo(veiculo.id)}>
-              <div className="checkbox">{selectedVeiculos.has(veiculo.id) ? <FaCheckSquare /> : <FaSquare />}</div>
-              <div className="item-info">
-                <span className="item-title">{veiculo.placa}</span>
-                <span className="item-subtitle">{veiculo.capacidade_kg} kg</span>
-              </div>
-              {veiculo.tipo === 'caminhao' ? <FaTruck className="vehicle-type-icon"/> : <FaVanShuttle className="vehicle-type-icon"/>}
-            </li>
-          ))}
-        </ul>
-        <div className="column-header">
-            <h3>3. Defina o Objetivo</h3>
-        </div>
-        <div className="optimization-goal">
-            <label><input type="radio" name="goal" defaultChecked/> Menor Distância</label>
-            <label><input type="radio" name="goal"/> Menor Tempo</label>
-        </div>
-        <button className="optimize-button" onClick={handleOptimize} disabled={isOptimizing}>
-          {isOptimizing ? 'Otimizando...' : 'Otimizar Rotas'}
-        </button>
-      </div>
-
-      <div className="optimizer-column result-column">
-        <div className="column-header">
-          <h3>4. Resultado da Otimização</h3>
-        </div>
-        {isOptimizing && <div className="loading-spinner">Calculando a melhor rota...</div>}
-        {result && (
-          <div className="result-content">
-            <div className="result-summary">
-                <div className="summary-item"><span>{result.resumo.rotas}</span> Rotas Geradas</div>
-                <div className="summary-item"><span>{result.resumo.distancia_total} km</span> Distância Total</div>
-                <div className="summary-item"><span>{result.resumo.economia}</span> Economia Estimada</div>
-            </div>
-            <div className="result-map">
-                <MapContainer center={[-25.43, -49.25]} zoom={12} scrollWheelZoom={false} className="optimizer-map-container">
-                    <TileLayer url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"/>
-                    {result.rotas.map(rota => (
-                        <Polyline key={rota.veiculo_id} pathOptions={{color: rota.cor, weight: 4}} positions={rota.path} />
-                    ))}
-                     {result.rotas.flatMap(rota => 
-                        rota.path.map((pos, index) => (
-                            <Marker key={`${rota.veiculo_id}-${index}`} position={pos} icon={createNumberedIcon(index + 1)}>
-                                <Popup>Rota: {rota.placa}<br/>Parada #{index + 1}</Popup>
-                            </Marker>
-                        ))
-                     )}
-                </MapContainer>
-            </div>
-            <ul className="route-details-list">
-                {result.rotas.map(rota => (
-                    <li key={rota.veiculo_id} style={{ borderLeftColor: rota.cor }}>
-                        <strong>Veículo: {rota.placa}</strong>
-                        <span>Sequência: {rota.entregas.join(' → ')}</span>
-                    </li>
-                ))}
-            </ul>
-            <button className="dispatch-button">Salvar e Despachar Rotas</button>
+    <div className="optimizer-page-container">
+      {/* Painel de Controle à Esquerda */}
+      <aside className="control-panel">
+        <header className="panel-header">
+          <h1>Planejador de Missão</h1>
+        </header>
+        <div className="panel-content">
+          <SelectionList 
+            title="Selecionar Entregas"
+            icon={<FaBoxOpen />}
+            items={fakeDeliveries}
+            selectedItems={selectedDeliveries}
+            onToggle={handleToggleDelivery}
+          />
+          <SelectionList 
+            title="Selecionar Frota Disponível"
+            icon={<FaTruck />}
+            items={fakeFleet}
+            selectedItems={selectedFleet}
+            onToggle={handleToggleFleet}
+          />
+          <div className="config-step">
+            <h2><FaCog /> Parâmetros</h2>
+            {/* Aqui entrariam os inputs para os parâmetros de otimização */}
+            <p style={{color: 'var(--text-secondary)', fontSize: '0.9rem'}}>Em breve: configuração de prioridades, janelas de tempo e mais.</p>
           </div>
-        )}
-      </div>
+        </div>
+        <footer className="panel-footer">
+          <button className="btn btn-primary" onClick={runOptimization} disabled={selectedDeliveries.length === 0 || selectedFleet.length === 0}>
+            Otimizar Agora!
+          </button>
+        </footer>
+      </aside>
+
+      {/* Área do Mapa à Direita */}
+      <main className="map-area">
+        <MapContainer 
+          center={[-25.43, -49.27]} 
+          zoom={13} 
+          className="live-map-container"
+          zoomControl={false}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          />
+          {/* Visualização das entregas selecionadas */}
+          {fakeDeliveries.map(d => selectedDeliveries.includes(d.id) && (
+            <Marker key={d.id} position={[d.lat, d.lng]}>
+              <Popup>{d.address}</Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+
+        {optimizationStatus === 'loading' && <LoadingOverlay />}
+        {optimizationStatus === 'success' && <ResultsOverlay stats={fakeResults} onReset={resetOptimization} />}
+      </main>
     </div>
   );
 }
