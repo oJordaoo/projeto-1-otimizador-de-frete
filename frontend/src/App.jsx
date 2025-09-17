@@ -13,6 +13,7 @@ import DashboardPreviewPage from './pages/DashboardPreviewPage.jsx';
 // Páginas Privadas
 import Dashboard from './pages/Dashboard.jsx';
 import Entregas from './pages/Entregas.jsx';
+import EntregaDetalhes from './pages/EntregaDetalhes.jsx'; // <-- NOVO
 import Veiculos from './pages/Veiculos.jsx';
 import Mapa from './pages/Mapa.jsx';
 import Otimizacao from './pages/Otimizacao.jsx';
@@ -32,9 +33,9 @@ function App() {
           toastOptions={{
             duration: 5000,
             style: {
-              background: 'var(--bg-secondary)',
-              color: 'var(--text-primary)',
-              border: '1px solid var(--border-color)',
+              background: '#FFFFFF',
+              color: '#111827',
+              border: '1px solid #E5E7EB',
             },
           }}
         />
@@ -58,6 +59,7 @@ function App() {
             <Route index element={<Navigate to="dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="entregas" element={<Entregas />} />
+            <Route path="entregas/:entregaId" element={<EntregaDetalhes />} /> {/* <-- NOVO */}
             <Route path="veiculos" element={<Veiculos />} />
             <Route path="mapa" element={<Mapa />} />
             <Route path="otimizacao" element={<Otimizacao />} />

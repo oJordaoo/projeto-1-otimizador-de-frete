@@ -1,25 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import toast from 'react-hot-toast';
-import { FaPlus, FaSearch, FaEdit, FaTrashAlt, FaTruck, FaFilter } from 'react-icons/fa';
+import { FaPlus, FaSearch, FaEdit, FaTrashAlt, FaTruck, FaFilter, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { FaVanShuttle } from 'react-icons/fa6';
+import axiosInstance from '../api/axiosInstance';
 import './Veiculos.css';
 
-// --- DADOS FAKES DE ALTA QUALIDADE PARA A PÁGINA DE FROTA ---
-const veiculosFakeData = Array.from({ length: 15 }).map((_, i) => {
-    const isTruck = i % 3 !== 0;
-    return {
-        id: `v${i+1}`,
-        placa: `${['ABC','FRT','VEX'][i%3]}-${1000+i}`,
-        tipo: isTruck ? 'Caminhão' : 'Van',
-        capacidade_kg: `${isTruck ? 5000 + (i*100) : 1200 + (i*50)}.00`,
-        capacidade_m3: `${isTruck ? 30 + i : 8 + i}.00`,
-        motorista: `Motorista ${String.fromCharCode(65 + i)}`,
-        status: ['Disponível', 'Em Rota', 'Manutenção'][i % 3],
-        criado_em: new Date(2025, 8, i+1).toISOString(),
-    }
-});
-
-// --- Componente do Modal ---
+// --- Componente do Modal (Definido ANTES do componente principal) ---
 function VeiculoModal({ veiculo, onClose, onSave }) {
   const [formData, setFormData] = useState({
     placa: veiculo?.placa || '',
@@ -34,32 +20,23 @@ function VeiculoModal({ veiculo, onClose, onSave }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData);
+    onSave({ ...veiculo, ...formData });
   };
-
+  
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <h2>{veiculo ? 'Editar Veículo' : 'Adicionar Novo Veículo'}</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Placa</label>
-            <input name="placa" value={formData.placa} onChange={handleChange} required />
-          </div>
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h2>{veiculo ? 'Editar Veículo' : 'Adicionar Veículo'}</h2>
+          <button onClick={onClose} className="close-modal-btn">&times;</button>
+        </div>
+        <form onSubmit={handleSubmit} className="modal-form">
+          <div className="form-group"><label>Placa</label><input type="text" name="placa" value={formData.placa} onChange={handleChange} required /></div>
           <div className="form-grid">
-            <div className="form-group">
-              <label>Capacidade (kg)</label>
-              <input name="capacidade_kg" type="number" value={formData.capacidade_kg} onChange={handleChange} required />
-            </div>
-            <div className="form-group">
-              <label>Volume (m³)</label>
-              <input name="capacidade_m3" type="number" value={formData.capacidade_m3} onChange={handleChange} required />
-            </div>
+            <div className="form-group"><label>Capacidade (kg)</label><input type="number" name="capacidade_kg" value={formData.capacidade_kg} onChange={handleChange} required /></div>
+            <div className="form-group"><label>Capacidade (m³)</label><input type="number" name="capacidade_m3" value={formData.capacidade_m3} onChange={handleChange} required /></div>
           </div>
-          <div className="modal-actions">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary">Salvar</button>
-          </div>
+          <div className="modal-footer"><button type="button" className="btn-secondary" onClick={onClose}>Cancelar</button><button type="submit" className="btn-primary">Salvar</button></div>
         </form>
       </div>
     </div>
@@ -68,143 +45,158 @@ function VeiculoModal({ veiculo, onClose, onSave }) {
 
 // --- Componente Principal da Página ---
 function Veiculos() {
-  const [veiculos, setVeiculos] = useState([]);
+  const [allData, setAllData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sortConfig, setSortConfig] = useState({ key: 'placa', direction: 'asc' });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingVeiculo, setEditingVeiculo] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const itemsPerPage = 10;
 
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setVeiculos(veiculosFakeData);
+  const fetchData = async () => {
+    if (!loading) setLoading(true);
+    try {
+      const response = await axiosInstance.get('/fleet/vehicles/');
+      setAllData(response.data);
+    } catch (error) {
+      toast.error('Erro ao carregar a frota.');
+    } finally {
       setLoading(false);
-    }, 500); // Simula 0.5 segundo de carregamento
-  }, []);
-
-  const handleSave = (formData) => {
-    const toastId = toast.loading('Salvando...');
-    setTimeout(() => {
-        if(editingVeiculo) {
-            setVeiculos(prev => prev.map(v => v.id === editingVeiculo.id ? {...v, ...formData} : v));
-            toast.success('Veículo atualizado!', { id: toastId });
-        } else {
-            const newVeiculo = { id: `v_new_${Date.now()}`, ...formData, criado_em: new Date().toISOString(), motorista: 'Não Atribuído', status: 'Disponível', tipo: parseFloat(formData.capacidade_kg) > 2000 ? 'Caminhão' : 'Van' };
-            setVeiculos(prev => [newVeiculo, ...prev]);
-            toast.success('Veículo adicionado!', { id: toastId });
-        }
-        setIsModalOpen(false);
-    }, 1000);
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm('Tem certeza?')) {
-        const toastId = toast.loading('Excluindo...');
-        setTimeout(() => {
-            setVeiculos(prev => prev.filter(v => v.id !== id));
-            toast.success('Veículo excluído!', { id: toastId });
-        }, 1000);
     }
   };
 
-  const handleOpenModal = (veiculo = null) => {
-    setEditingVeiculo(veiculo);
-    setIsModalOpen(true);
+  useEffect(() => { fetchData(); }, []);
+
+  const filteredData = useMemo(() => {
+    let data = [...allData];
+    if (searchQuery) {
+        data = data.filter(item =>
+            item.placa.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }
+    data.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+    });
+    return data;
+  }, [allData, searchQuery, sortConfig]);
+
+  const paginatedData = useMemo(() => {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      return filteredData.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredData, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  const requestSort = (key) => {
+      let direction = 'asc';
+      if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
+      setSortConfig({ key, direction });
   };
   
-  const filteredVeiculos = useMemo(() => {
-    if (!Array.isArray(veiculos)) return [];
-    return veiculos.filter(v => 
-      (v.placa && v.placa.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (v.motorista && v.motorista.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-  }, [veiculos, searchTerm]);
+  const kpiData = useMemo(() => ({
+    total: allData.length,
+    disponivel: allData.filter(v => v.status === 'Disponível').length || allData.length,
+    emRota: allData.filter(v => v.status === 'Em Rota').length || 0,
+    manutencao: allData.filter(v => v.status === 'Manutenção').length || 0,
+  }), [allData]);
 
-  const kpis = useMemo(() => ({
-    total: veiculos.length,
-    disponiveis: veiculos.filter(v => v.status === 'Disponível').length,
-    emRota: veiculos.filter(v => v.status === 'Em Rota').length,
-    manutencao: veiculos.filter(v => v.status === 'Manutenção').length,
-  }), [veiculos]);
+  const handleOpenModal = (veiculo) => { setEditingVeiculo(veiculo); setIsModalOpen(true); };
+  
+  const handleSave = async (veiculoData) => {
+    const isEditing = !!(editingVeiculo && editingVeiculo.id);
+    const toastId = toast.loading(isEditing ? 'Atualizando veículo...' : 'Adicionando veículo...');
+    const endpoint = isEditing ? `/fleet/vehicles/${editingVeiculo.id}/` : '/fleet/vehicles/';
+    const method = isEditing ? 'put' : 'post';
 
-
-  if (loading) return <div>Carregando frota...</div>;
+    try {
+      await axiosInstance[method](endpoint, veiculoData);
+      toast.success(`Veículo ${isEditing ? 'atualizado' : 'adicionado'}!`, { id: toastId });
+      fetchData();
+    } catch (error) {
+      const errorMsg = error.response?.data?.placa?.[0] || 'Ocorreu um erro.';
+      toast.error(errorMsg, { id: toastId });
+    } finally {
+      setIsModalOpen(false);
+      setEditingVeiculo(null);
+    }
+  };
+  
+  const handleDelete = async (veiculoId) => {
+    if (window.confirm("Tem certeza que deseja excluir este veículo?")) {
+      const toastId = toast.loading('Excluindo veículo...');
+      try {
+        await axiosInstance.delete(`/fleet/vehicles/${veiculoId}/`);
+        toast.success("Veículo excluído!", { id: toastId });
+        fetchData();
+      } catch (error) {
+        toast.error("Erro ao excluir.", { id: toastId });
+      }
+    }
+  };
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <h1>Gestão de Frota</h1>
+    <div className="page-container data-page-container theme-light">
+      <div className="data-page-toolbar">
+          <div className="toolbar-left"><h2>Gerenciamento de Frota</h2></div>
+          <div className="toolbar-right">
+              <div className="search-wrapper"><FaSearch /><input type="text" placeholder="Buscar por placa..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} /></div>
+              <button className="btn-secondary"><FaFilter /> Filtros</button>
+              <button className="btn-primary" onClick={() => handleOpenModal(null)}><FaPlus/> Adicionar Veículo</button>
+          </div>
+      </div>
+
+      <div className="kpi-grid">
+          <div className="kpi-card"><span>{kpiData.total}</span><p>Veículos Totais</p></div>
+          <div className="kpi-card"><span>{kpiData.disponivel}</span><p>Disponíveis</p></div>
+          <div className="kpi-card"><span>{kpiData.emRota}</span><p>Em Rota</p></div>
+          <div className="kpi-card"><span>{kpiData.manutencao}</span><p>Em Manutenção</p></div>
       </div>
       
-      <div className="kpi-row-veiculos">
-        <div className="kpi-card-veiculos"><span>{kpis.total}</span> Total de Veículos</div>
-        <div className="kpi-card-veiculos"><span>{kpis.disponiveis}</span> Disponíveis</div>
-        <div className="kpi-card-veiculos"><span>{kpis.emRota}</span> Em Rota</div>
-        <div className="kpi-card-veiculos"><span>{kpis.manutencao}</span> Em Manutenção</div>
-      </div>
-
-      <div className="content-card">
-        <div className="table-controls">
-          <div className="search-bar">
-            <FaSearch className="search-icon" />
-            <input 
-              type="text" 
-              placeholder="Pesquisar por placa ou motorista..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <button className="filter-button"><FaFilter /> Filtros</button>
-          <button className="add-button" onClick={() => handleOpenModal()}>
-            <FaPlus />
-            Adicionar Veículo
-          </button>
-        </div>
-
-        <div className="table-container">
-          <table className="data-table-pro">
-            <thead>
-              <tr>
-                <th><input type="checkbox" /></th>
-                <th>Veículo (Placa)</th>
-                <th>Motorista</th>
-                <th>Capacidade</th>
-                <th>Status</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredVeiculos.map(veiculo => (
-                <tr key={veiculo.id}>
-                  <td><input type="checkbox" /></td>
-                  <td>
-                    <div className="vehicle-cell">
-                      <div className="vehicle-icon-wrapper">
-                        {veiculo.tipo === 'Caminhão' ? <FaTruck /> : <FaVanShuttle />}
-                      </div>
-                      <span className="vehicle-plate">{veiculo.placa}</span>
-                    </div>
-                  </td>
-                  <td>{veiculo.motorista}</td>
-                  <td>{veiculo.capacidade_kg} kg / {veiculo.capacidade_m3} m³</td>
-                  <td><span className={`status-badge status-${veiculo.status.toLowerCase()}`}>{veiculo.status}</span></td>
-                  <td className="actions-cell">
-                    <button className="action-btn" onClick={() => handleOpenModal(veiculo)} title="Editar"><FaEdit /></button>
-                    <button className="action-btn delete-btn" onClick={() => handleDelete(veiculo.id)} title="Excluir"><FaTrashAlt /></button>
-                  </td>
+      <div className="data-table-card">
+        <div className="table-wrapper">
+          {loading ? <p className="loading-text">Carregando frota...</p> : (
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" /></th>
+                  <th onClick={() => requestSort('placa')}>Veículo {sortConfig.key === 'placa' && (sortConfig.direction === 'asc' ? <FaArrowUp/> : <FaArrowDown/>)}</th>
+                  <th onClick={() => requestSort('capacidade_kg')}>Capacidade {sortConfig.key === 'capacidade_kg' && (sortConfig.direction === 'asc' ? <FaArrowUp/> : <FaArrowDown/>)}</th>
+                  <th>Ações</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {paginatedData.map(veiculo => (
+                  <tr key={veiculo.id}>
+                    <td><input type="checkbox" /></td>
+                    <td>
+                      <div className="cell-vehicle-info">
+                        <div className="vehicle-icon">{parseFloat(veiculo.capacidade_m3) > 20 ? <FaTruck /> : <FaVanShuttle />}</div>
+                        <span>{veiculo.placa}</span>
+                      </div>
+                    </td>
+                    <td>{parseFloat(veiculo.capacidade_kg)} kg / {parseFloat(veiculo.capacidade_m3)} m³</td>
+                    <td className="cell-actions">
+                      <button className="action-btn" onClick={() => handleOpenModal(veiculo)} title="Editar"><FaEdit /></button>
+                      <button className="action-btn delete" onClick={() => handleDelete(veiculo.id)} title="Excluir"><FaTrashAlt /></button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
+        {!loading && (
+          <div className="table-pagination">
+              <button onClick={() => setCurrentPage(p => Math.max(1, p-1))} disabled={currentPage === 1}>Anterior</button>
+              <span>Página {currentPage} de {totalPages}</span>
+              <button onClick={() => setCurrentPage(p => Math.min(totalPages, p+1))} disabled={currentPage === totalPages}>Próxima</button>
+          </div>
+        )}
       </div>
-      {isModalOpen && (
-        <VeiculoModal 
-          veiculo={editingVeiculo}
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleSave}
-        />
-      )}
+      {isModalOpen && ( <VeiculoModal veiculo={editingVeiculo} onClose={() => setIsModalOpen(false)} onSave={handleSave} /> )}
     </div>
   );
 }

@@ -1,19 +1,25 @@
-/* === Estilos de Botão Padronizados === */
+/* === ESTILOS DE BOTÃO PADRONIZADOS (CORRIGIDO) === */
 
 /* Base para todos os botões */
-.btn {
+.btn, .btn-primary, .btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem; /* 8px */
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 600;
-  font-size: 0.95rem; /* Um pouco menor para consistência */
-  padding: 0.6rem 1.25rem; /* Padding padrão */
+  font-size: 0.95rem;
+  padding: 0.6rem 1.25rem;
   border-radius: 8px;
   border: 1px solid transparent;
   cursor: pointer;
-  
+  transition: all 0.2s ease;
   white-space: nowrap;
+}
+
+.btn:disabled, .btn-primary:disabled, .btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn svg {
@@ -21,25 +27,28 @@
   height: 18px;
 }
 
-/* Botão Primário (Azul) */
+/* Botão Primário (Cor Principal do Sistema) */
 .btn-primary {
-  background-color: #2563EB; /* Azul primário especificado */
+  background-color: var(--vexa-primary);
   color: #FFFFFF;
-  box-shadow: 0 4px 15px -3px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 4px 15px -3px rgba(44, 62, 80, 0.25);
 }
 
-.btn-primary:hover {
-  background-color: #1E40AF; /* Azul mais escuro para hover */
+.btn-primary:hover:not(:disabled) {
+  background-color: #1A2C3D; /* Tom mais escuro de --vexa-primary */
+  box-shadow: 0 4px 20px -3px rgba(44, 62, 80, 0.35);
+  transform: translateY(-2px);
 }
 
-/* Botão Secundário (Cinza Escuro) */
+/* Botão Secundário */
 .btn-secondary {
-  background-color: var(--bg-tertiary, #20232a);
-  color: var(--text-primary, #f0f2f5);
-  border-color: var(--border-color, #3c424f);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
 }
 
-.btn-secondary:hover {
-  background-color: var(--border-color, #3c424f);
-  border-color: #4c525f;
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--bg-secondary);
+  border-color: var(--vexa-primary);
+  color: var(--vexa-primary);
 }
